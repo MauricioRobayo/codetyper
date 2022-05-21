@@ -13,8 +13,8 @@ type TextState = {
 }[];
 
 const characterColorMap: Record<CharacterStatus, string> = {
-  error: "text-red-400 text-bold",
-  idle: "bg-none",
+  error: "text-red-400 font-bold",
+  idle: "",
   success: "text-green-400",
   active: "bg-green-400",
 };
@@ -52,7 +52,7 @@ export function TypeTest({ text }: TypeTest) {
         setTextState((previousTextState) => {
           const newTextState = [...previousTextState];
           newTextState[currentIndex].status = "error";
-          newTextState[currentIndex].typedKey = key;
+          newTextState[currentIndex].typedKey = key === " " ? "_" : key;
           return newTextState;
         });
       }
