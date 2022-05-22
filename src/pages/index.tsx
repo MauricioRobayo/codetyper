@@ -3,9 +3,27 @@ import Head from "next/head";
 import { TypeTest } from "../components/Typer";
 
 const Home: NextPage = () => {
-  const sampleText = `let str = "1 turkey has a discount of 30%";
+  const sampleText = `test('the data is peanut butter', async () => {
+  const data = await fetchData();
+  expect(data).toBe('peanut butter');
+});
 
-alert(str.match(/\d+(?=%)/)); // 30, the number 1 is ignored, as it's not followed by %`;
+test('the fetch fails with an error', async () => {
+  expect.assertions(1);
+  try {
+    await fetchData();
+  } catch (e) {
+    expect(e).toMatch('error');
+  }
+});
+
+test('the data is peanut butter', async () => {
+  await expect(fetchData()).resolves.toBe('peanut butter');
+});
+
+test('the fetch fails with an error', async () => {
+  await expect(fetchData()).rejects.toMatch('error');
+});`;
 
   return (
     <div>

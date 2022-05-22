@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import cn from "classnames";
+import { useEffect, useState } from "react";
 
 type TypeTest = {
   text: string;
@@ -10,69 +10,119 @@ type TextState = {
   char: string;
   status: CharacterStatus;
   typedKey: string;
+  ignore: boolean;
 }[];
 
 const characterColorMap: Record<CharacterStatus, string> = {
   error: "text-red-400 font-bold",
   idle: "",
-  success: "text-green-400",
-  active: "bg-green-400",
+  success: "text-green-300",
+  active: "bg-green-300",
 };
 
 export function TypeTest({ text }: TypeTest) {
-  const [textState, setTextState] = useState<TextState>(() =>
-    text.split("").map((char) => ({ char, status: "idle", typedKey: "" }))
-  );
+  const [textState, setTextState] = useState<TextState>(() => {
+    let ignore = false;
+    let setIgnore = false;
+    return text.split("").map((char) => {
+      if (!setIgnore && char === "\n") {
+        ignore = false;
+        setIgnore = true;
+      } else if (setIgnore && /\s/.test(char)) {
+        ignore = true;
+      } else {
+        ignore = false;
+        setIgnore = false;
+      }
+      return {
+        char,
+        status: "idle",
+        typedKey: "",
+        ignore,
+      };
+    });
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const handleKeydown = ({ key }: KeyboardEvent) => {
-      console.log({ key });
-
-      if (key === "Control") {
+    const handleKeydown = ({ key, ctrlKey, altKey }: KeyboardEvent) => {
+      if (
+        ctrlKey ||
+        altKey ||
+        [
+          "ArrowDown",
+          "ArrowUp",
+          "ArrowLeft",
+          "ArrowRight",
+          "Control",
+          "Alt",
+          "Escape",
+          "Delete",
+          "Shift",
+          "MediaPause",
+        ].includes(key)
+      ) {
         return;
       }
 
       if (key === "Backspace") {
-        setCurrentIndex((previousCurrentIndex) =>
-          Math.max(0, previousCurrentIndex - 1)
-        );
+        if (currentIndex === 0) {
+          return;
+        }
+
+        setCurrentIndex((previousIndex) => {
+          let newIndex = Math.max(0, previousIndex - 1);
+          while (textState[newIndex].ignore) {
+            newIndex--;
+          }
+
+          return newIndex;
+        });
 
         setTextState((previousTextState) => {
-          const newTextState = [...previousTextState];
-          newTextState[currentIndex - 1].status = "idle";
-          newTextState[currentIndex - 1].typedKey = "";
-          return newTextState;
+          previousTextState[currentIndex - 1].status = "idle";
+          previousTextState[currentIndex - 1].typedKey = "";
+          return [...previousTextState];
         });
 
         return;
       }
 
-      if (key !== "Shift" && key !== textState[currentIndex].char) {
+      if (
+        (key === "Enter" && textState[currentIndex].char === "\n") ||
+        key === textState[currentIndex].char
+      ) {
         setTextState((previousTextState) => {
-          const newTextState = [...previousTextState];
-          newTextState[currentIndex].status = "error";
-          newTextState[currentIndex].typedKey = key === " " ? "_" : key;
-          return newTextState;
+          previousTextState[currentIndex].status = "success";
+          previousTextState[currentIndex].typedKey =
+            previousTextState[currentIndex].char;
+          return [...previousTextState];
         });
+        updateCurrentIndex();
+        return;
       }
 
-      if (key === textState[currentIndex].char) {
+      if (key !== textState[currentIndex].char) {
         setTextState((previousTextState) => {
-          const newTextState = [...previousTextState];
-          newTextState[currentIndex].status = "success";
-          newTextState[currentIndex].typedKey = key;
-          return newTextState;
+          previousTextState[currentIndex].status = "error";
+          previousTextState[currentIndex].typedKey = key === " " ? "_" : key;
+          return [...previousTextState];
         });
+        updateCurrentIndex();
+        return;
       }
 
-      setCurrentIndex((previousIndex) => {
-        if (key === "Shift") {
-          return previousIndex;
-        }
+      updateCurrentIndex();
 
-        return Math.min(textState.length, previousIndex + 1);
-      });
+      function updateCurrentIndex() {
+        setCurrentIndex((previousIndex) => {
+          let newIndex = Math.min(textState.length, previousIndex + 1);
+          while (textState[newIndex].ignore) {
+            newIndex++;
+          }
+          return newIndex;
+        });
+      }
     };
 
     window.addEventListener("keydown", handleKeydown);
@@ -80,21 +130,35 @@ export function TypeTest({ text }: TypeTest) {
   }, [currentIndex, textState]);
 
   return (
-    <div className="bg-slate-800 text-green-600 rounded-sm my-4 p-4">
-      <pre>
-        {textState.map(({ char, status }, index) => {
-          return (
-            <span
-              className={cn("pt-1", characterColorMap[status], {
-                [characterColorMap["active"]]: index === currentIndex,
-              })}
-              key={index}
-            >
-              {textState[index].typedKey || textState[index].char}
-            </span>
-          );
-        })}
-      </pre>
-    </div>
+    <>
+      <div className="bg-slate-800 text-green-600 rounded-sm m-4 p-4 text-lg">
+        <pre>
+          {textState.map(({ char, status, typedKey }, index) => {
+            return (
+              <span
+                className={cn(
+                  "pt-1 before:content-[attr(data-content)]",
+                  characterColorMap[status],
+                  {
+                    [characterColorMap["active"]]: index === currentIndex,
+                    "w-0": index < currentIndex,
+                  }
+                )}
+                key={index}
+                data-content={
+                  index === currentIndex && char === "\n"
+                    ? "⏎"
+                    : status === "error" && char === "\n"
+                    ? typedKey
+                    : ""
+                }
+              >
+                {char === "\n" ? "\n" : typedKey || char}
+              </span>
+            );
+          })}
+        </pre>
+      </div>
+    </>
   );
 }
