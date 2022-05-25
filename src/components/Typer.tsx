@@ -47,23 +47,23 @@ export function TypeTest({ text }: TypeTest) {
   useEffect(() => {
     const handleKeydown = ({ key, ctrlKey, altKey }: KeyboardEvent) => {
       if (
-        ctrlKey ||
         altKey ||
+        ctrlKey ||
         [
+          "Alt",
           "ArrowDown",
-          "ArrowUp",
           "ArrowLeft",
           "ArrowRight",
+          "ArrowUp",
           "Control",
-          "Alt",
-          "Escape",
           "Delete",
-          "Shift",
-          "MediaPause",
-          "Home",
-          "PageUp",
-          "PageDown",
           "End",
+          "Escape",
+          "Home",
+          "MediaPause",
+          "PageDown",
+          "PageUp",
+          "Shift",
         ].includes(key)
       ) {
         return;
@@ -96,6 +96,7 @@ export function TypeTest({ text }: TypeTest) {
         (key === "Enter" && textState[currentIndex].char === "\n") ||
         key === textState[currentIndex].char
       ) {
+        console.log("here1");
         setTextState((previousTextState) => {
           previousTextState[currentIndex].status = "success";
           previousTextState[currentIndex].typedKey =
@@ -108,7 +109,9 @@ export function TypeTest({ text }: TypeTest) {
 
       setTextState((previousTextState) => {
         previousTextState[currentIndex].status = "error";
-        previousTextState[currentIndex].typedKey = key === " " ? "_" : key;
+        previousTextState[currentIndex].typedKey = [" ", "Enter"].includes(key)
+          ? "_"
+          : key;
         return [...previousTextState];
       });
       updateCurrentIndex();
