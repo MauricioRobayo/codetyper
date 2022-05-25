@@ -24,7 +24,7 @@ export function TypeTest({ text }: TypeTest) {
   const [textState, setTextState] = useState<TextState>(() => {
     let ignore = false;
     let setIgnore = false;
-    return text.split("").map((char) => {
+    return text.split("").map((char, index) => {
       if (!setIgnore && char === "\n") {
         ignore = false;
         setIgnore = true;
@@ -36,7 +36,7 @@ export function TypeTest({ text }: TypeTest) {
       }
       return {
         char,
-        status: "idle",
+        status: index === 0 ? "active" : "idle",
         typedKey: "",
         ignore,
       };
@@ -74,21 +74,13 @@ export function TypeTest({ text }: TypeTest) {
           return;
         }
 
-        setCurrentIndex((previousIndex) => {
-          let newIndex = Math.max(0, previousIndex - 1);
-          while (textState[newIndex].ignore) {
-            newIndex--;
-          }
+        let newIndex = Math.max(0, currentIndex - 1);
+        while (textState[newIndex].ignore) {
+          newIndex--;
+        }
 
-          return newIndex;
-        });
-
-        setTextState((previousTextState) => {
-          previousTextState[currentIndex - 1].status = "idle";
-          previousTextState[currentIndex - 1].typedKey = "";
-          return [...previousTextState];
-        });
-
+        setCurrentIndex(newIndex);
+        updateState("idle", "", newIndex);
         return;
       }
 
@@ -96,34 +88,33 @@ export function TypeTest({ text }: TypeTest) {
         (key === "Enter" && textState[currentIndex].char === "\n") ||
         key === textState[currentIndex].char
       ) {
-        console.log("here1");
-        setTextState((previousTextState) => {
-          previousTextState[currentIndex].status = "success";
-          previousTextState[currentIndex].typedKey =
-            previousTextState[currentIndex].char;
-          return [...previousTextState];
-        });
-        updateCurrentIndex();
+        updateState("success", textState[currentIndex].char);
         return;
       }
 
-      setTextState((previousTextState) => {
-        previousTextState[currentIndex].status = "error";
-        previousTextState[currentIndex].typedKey = [" ", "Enter"].includes(key)
-          ? "_"
-          : key;
-        return [...previousTextState];
-      });
-      updateCurrentIndex();
+      updateState("error", [" ", "Enter"].includes(key) ? "_" : key);
 
-      function updateCurrentIndex() {
-        setCurrentIndex((previousIndex) => {
-          let newIndex = Math.min(textState.length, previousIndex + 1);
-          while (textState[newIndex].ignore) {
-            newIndex++;
-          }
-          return newIndex;
+      function calculateNewIndex() {
+        let newIndex = Math.min(textState.length, currentIndex + 1);
+        while (textState[newIndex].ignore) {
+          newIndex++;
+        }
+        return newIndex;
+      }
+
+      function updateState(
+        status: CharacterStatus,
+        typedKey: string,
+        index?: number
+      ) {
+        const newIndex = index ?? calculateNewIndex();
+        setTextState((previousTextState) => {
+          previousTextState[newIndex].status = "active";
+          previousTextState[currentIndex].status = status;
+          previousTextState[currentIndex].typedKey = typedKey;
+          return [...previousTextState];
         });
+        setCurrentIndex(newIndex);
       }
     };
 
@@ -140,11 +131,7 @@ export function TypeTest({ text }: TypeTest) {
               <span
                 className={cn(
                   "pt-1 before:content-[attr(data-content)]",
-                  characterColorMap[status],
-                  {
-                    [characterColorMap["active"]]: index === currentIndex,
-                    "w-0": index < currentIndex,
-                  }
+                  characterColorMap[status]
                 )}
                 key={index}
                 data-content={
