@@ -60,6 +60,10 @@ export function TypeTest({ text }: TypeTest) {
           "Delete",
           "Shift",
           "MediaPause",
+          "Home",
+          "PageUp",
+          "PageDown",
+          "End",
         ].includes(key)
       ) {
         return;
@@ -102,16 +106,11 @@ export function TypeTest({ text }: TypeTest) {
         return;
       }
 
-      if (key !== textState[currentIndex].char) {
-        setTextState((previousTextState) => {
-          previousTextState[currentIndex].status = "error";
-          previousTextState[currentIndex].typedKey = key === " " ? "_" : key;
-          return [...previousTextState];
-        });
-        updateCurrentIndex();
-        return;
-      }
-
+      setTextState((previousTextState) => {
+        previousTextState[currentIndex].status = "error";
+        previousTextState[currentIndex].typedKey = key === " " ? "_" : key;
+        return [...previousTextState];
+      });
       updateCurrentIndex();
 
       function updateCurrentIndex() {
