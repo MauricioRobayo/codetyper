@@ -8,6 +8,7 @@ type TypeTest = {
 type CharacterStatus = "success" | "error" | "active" | "idle";
 type TextState = {
   char: string;
+  displayChar: string;
   status: CharacterStatus;
   typedKey: string;
   ignore: boolean;
@@ -18,6 +19,10 @@ const characterColorMap: Record<CharacterStatus, string> = {
   idle: "",
   success: "text-green-300",
   active: "bg-green-300",
+};
+
+const displayChars: Record<string, string> = {
+  "\n": "⏎",
 };
 
 export function TypeTest({ text }: TypeTest) {
@@ -36,6 +41,7 @@ export function TypeTest({ text }: TypeTest) {
       }
       return {
         char,
+        displayChar: displayChars[char] ?? char,
         status: index === 0 ? "active" : "idle",
         typedKey: "",
         ignore,
@@ -110,6 +116,7 @@ export function TypeTest({ text }: TypeTest) {
         const newIndex = index ?? calculateNewIndex();
         setTextState((previousTextState) => {
           previousTextState[newIndex].status = "active";
+          previousTextState[newIndex].typedKey = "";
           previousTextState[currentIndex].status = status;
           previousTextState[currentIndex].typedKey = typedKey;
           return [...previousTextState];
@@ -126,7 +133,7 @@ export function TypeTest({ text }: TypeTest) {
     <>
       <div className="bg-slate-800 text-green-600 rounded-sm m-4 p-4 text-lg">
         <pre>
-          {textState.map(({ char, status, typedKey }, index) => {
+          {textState.map(({ char, status, typedKey, displayChar }, index) => {
             return (
               <span
                 className={cn(
@@ -135,8 +142,8 @@ export function TypeTest({ text }: TypeTest) {
                 )}
                 key={index}
                 data-content={
-                  index === currentIndex && char === "\n"
-                    ? "⏎"
+                  status === "active" && char === "\n"
+                    ? displayChar
                     : status === "error" && char === "\n"
                     ? typedKey
                     : ""
