@@ -23,37 +23,22 @@ const displayChars: Record<string, string> = {
 
 type TypeTestProps = {
   text: string;
+  onFinish: () => void;
 };
-export function TypeTest({ text }: TypeTestProps) {
-  const [textState, setTextState] = useState<TextState>(() => {
-    let ignore = false;
-    let setIgnore = false;
-    const textState: TextState = text
-      .replace(/[“”]/g, '"')
-      .split("")
-      .map((char, index) => {
-        if (!setIgnore && char === "\n") {
-          ignore = false;
-          setIgnore = true;
-        } else if (setIgnore && /\s/.test(char)) {
-          ignore = true;
-        } else {
-          ignore = false;
-          setIgnore = false;
-        }
-        return {
-          char,
-          displayChar: displayChars[char] ?? char,
-          status: index === 0 ? "active" : "idle",
-          typedKey: "",
-          ignore,
-        };
-      });
-    return textState;
-  });
+export function TypeTest({ text, onFinish }: TypeTestProps) {
+  const [textState, setTextState] = useState<TextState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    setCurrentIndex(0);
+    setTextState(textToObject(text));
+  }, [text]);
+
+  useEffect(() => {
+    if (textState === null) {
+      return;
+    }
+
     const handleKeydown = ({ key, ctrlKey, altKey }: KeyboardEvent) => {
       if (
         altKey ||
@@ -90,7 +75,7 @@ export function TypeTest({ text }: TypeTestProps) {
         }
 
         setCurrentIndex(newIndex);
-        updateState("idle", "", newIndex);
+        updateState(textState, "idle", "", newIndex);
         return;
       }
 
@@ -98,13 +83,13 @@ export function TypeTest({ text }: TypeTestProps) {
         (key === "Enter" && textState[currentIndex].char === "\n") ||
         key === textState[currentIndex].char
       ) {
-        updateState("success", textState[currentIndex].char);
+        updateState(textState, "success", textState[currentIndex].char);
         return;
       }
 
-      updateState("error", [" ", "Enter"].includes(key) ? "_" : key);
+      updateState(textState, "error", [" ", "Enter"].includes(key) ? "_" : key);
 
-      function calculateNewIndex() {
+      function calculateNewIndex(textState: TextState) {
         let newIndex = Math.min(textState.length - 1, currentIndex + 1);
         while (textState[newIndex].ignore) {
           newIndex++;
@@ -113,25 +98,31 @@ export function TypeTest({ text }: TypeTestProps) {
       }
 
       function updateState(
+        textState: TextState,
         status: CharacterStatus,
         typedKey: string,
         index?: number
       ) {
-        const newIndex = index ?? calculateNewIndex();
-        setTextState((previousTextState) => {
-          previousTextState[newIndex].status = "active";
-          previousTextState[newIndex].typedKey = "";
-          previousTextState[currentIndex].status = status;
-          previousTextState[currentIndex].typedKey = typedKey;
-          return [...previousTextState];
-        });
+        const newIndex = index ?? calculateNewIndex(textState);
+        textState[newIndex].status = "active";
+        textState[newIndex].typedKey = "";
+        textState[currentIndex].status = status;
+        textState[currentIndex].typedKey = typedKey;
+        setTextState([...textState]);
         setCurrentIndex(newIndex);
+        if (currentIndex === textState.length - 1) {
+          onFinish();
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [currentIndex, textState]);
+  }, [currentIndex, textState, onFinish]);
+
+  if (textState === null) {
+    return null;
+  }
 
   return (
     <>
@@ -157,4 +148,31 @@ export function TypeTest({ text }: TypeTestProps) {
       })}
     </>
   );
+}
+
+function textToObject(text: string): TextState {
+  let ignore = false;
+  let setIgnore = false;
+  const textState: TextState = text
+    .replace(/[“”]/g, '"')
+    .split("")
+    .map((char, index) => {
+      if (!setIgnore && char === "\n") {
+        ignore = false;
+        setIgnore = true;
+      } else if (setIgnore && /\s/.test(char)) {
+        ignore = true;
+      } else {
+        ignore = false;
+        setIgnore = false;
+      }
+      return {
+        char,
+        displayChar: displayChars[char] ?? char,
+        status: index === 0 ? "active" : "idle",
+        typedKey: "",
+        ignore,
+      };
+    });
+  return textState;
 }

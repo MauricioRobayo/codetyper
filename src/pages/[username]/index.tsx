@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { Button } from "../../components/Button";
 import { Gist } from "../../hooks/useGist";
 import { useGists } from "../../hooks/useGists";
 
@@ -32,13 +33,9 @@ const UserPage = () => {
     <>
       <div>
         <div className="flex items-center justify-between">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={startRandomTypeTest}
-          >
-            Random
-          </button>
+          <Button onClick={startRandomTypeTest}>
+            Start Random Typing Test
+          </Button>
         </div>
       </div>
       <ul>
