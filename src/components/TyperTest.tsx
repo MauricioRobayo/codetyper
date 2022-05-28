@@ -29,24 +29,28 @@ export function TypeTest({ text }: TypeTest) {
   const [textState, setTextState] = useState<TextState>(() => {
     let ignore = false;
     let setIgnore = false;
-    return text.split("").map((char, index) => {
-      if (!setIgnore && char === "\n") {
-        ignore = false;
-        setIgnore = true;
-      } else if (setIgnore && /\s/.test(char)) {
-        ignore = true;
-      } else {
-        ignore = false;
-        setIgnore = false;
-      }
-      return {
-        char,
-        displayChar: displayChars[char] ?? char,
-        status: index === 0 ? "active" : "idle",
-        typedKey: "",
-        ignore,
-      };
-    });
+    const textState: TextState = text
+      .replace(/[“”]/g, '"')
+      .split("")
+      .map((char, index) => {
+        if (!setIgnore && char === "\n") {
+          ignore = false;
+          setIgnore = true;
+        } else if (setIgnore && /\s/.test(char)) {
+          ignore = true;
+        } else {
+          ignore = false;
+          setIgnore = false;
+        }
+        return {
+          char,
+          displayChar: displayChars[char] ?? char,
+          status: index === 0 ? "active" : "idle",
+          typedKey: "",
+          ignore,
+        };
+      });
+    return textState;
   });
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -101,7 +105,7 @@ export function TypeTest({ text }: TypeTest) {
       updateState("error", [" ", "Enter"].includes(key) ? "_" : key);
 
       function calculateNewIndex() {
-        let newIndex = Math.min(textState.length, currentIndex + 1);
+        let newIndex = Math.min(textState.length - 1, currentIndex + 1);
         while (textState[newIndex].ignore) {
           newIndex++;
         }
@@ -131,29 +135,27 @@ export function TypeTest({ text }: TypeTest) {
 
   return (
     <>
-      <div className="bg-slate-800 text-green-600 rounded-sm m-4 p-4 text-lg">
-        <pre>
-          {textState.map(({ char, status, typedKey, displayChar }, index) => {
-            return (
-              <span
-                className={cn(
-                  "pt-1 before:content-[attr(data-content)]",
-                  characterColorMap[status]
-                )}
-                key={index}
-                data-content={
-                  status === "active" && char === "\n"
-                    ? displayChar
-                    : status === "error" && char === "\n"
-                    ? typedKey
-                    : ""
-                }
-              >
-                {char === "\n" ? "\n" : typedKey || char}
-              </span>
-            );
-          })}
-        </pre>
+      <div className="font-mono bg-slate-800 text-green-600 rounded-sm m-4 p-4 text-lg">
+        {textState.map(({ char, status, typedKey, displayChar }, index) => {
+          return (
+            <span
+              className={cn(
+                "pt-1 before:content-[attr(data-content)]",
+                characterColorMap[status]
+              )}
+              key={index}
+              data-content={
+                status === "active" && char === "\n"
+                  ? displayChar
+                  : status === "error" && char === "\n"
+                  ? typedKey
+                  : ""
+              }
+            >
+              {char === "\n" ? "\n" : typedKey || char}
+            </span>
+          );
+        })}
       </div>
     </>
   );

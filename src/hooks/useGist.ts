@@ -10,7 +10,9 @@ interface GistFile {
   truncated: boolean;
   content: string;
 }
-interface Gist {
+export interface Gist {
+  id: string;
+  description: string;
   files: { [filename: string]: GistFile };
 }
 
@@ -21,6 +23,7 @@ export const useGist = (gistId: string) => {
     );
     return data;
   };
+
   return useQuery(["gist", gistId], () => fetchGist(gistId), {
     enabled: gistId !== "",
   });

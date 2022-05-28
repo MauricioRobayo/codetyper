@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { TypeTest } from "../../components/Typer";
+import { TypeTest } from "../../components/TyperTest";
 import { useGist } from "../../hooks/useGist";
 import { useRawFile } from "../../hooks/useRawFile";
 
@@ -16,9 +16,17 @@ const GistPage: NextPage = () => {
 
     return null;
   }, [gistQuery.data]);
-  const rawFile = useRawFile(gistFilesRawUrls?.[0] ?? "");
+  const rawFileQuery = useRawFile(gistFilesRawUrls?.[0] ?? "");
 
-  return <TypeTest text={rawFile.data || ""} />;
+  if (rawFileQuery.isError || gistQuery.isError) {
+    <div>Something wrong happened!</div>;
+  }
+
+  if (rawFileQuery.isSuccess) {
+    return <TypeTest text={rawFileQuery.data} />;
+  }
+
+  return <div>Loading...</div>;
 };
 
 export default GistPage;
