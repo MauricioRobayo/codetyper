@@ -6,10 +6,12 @@ import { useGist } from "../../hooks/useGist";
 import { useRawFiles } from "../../hooks/useRawFiles";
 
 const GistPage: NextPage = () => {
-  const { query } = useRouter();
+  const router = useRouter();
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
-
-  const gistQuery = useGist(typeof query.id === "string" ? query.id : "");
+  const id = router.query.id as string;
+  const username = router.query.username as string;
+  console.log({ username });
+  const gistQuery = useGist(id);
   const gistFilesRawUrls = useMemo(() => {
     if (gistQuery.data) {
       return Object.values(gistQuery.data.files).map(({ raw_url }) => raw_url);
@@ -29,6 +31,7 @@ const GistPage: NextPage = () => {
       !rawFilesQuery.data ||
       currentFileIndex >= rawFilesQuery.data.length - 1
     ) {
+      router.push(`/${username}`);
       return;
     }
 
