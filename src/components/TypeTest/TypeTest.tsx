@@ -1,10 +1,6 @@
 import cn from "classnames";
 import { useEffect, useState } from "react";
 
-type TypeTest = {
-  text: string;
-};
-
 type CharacterStatus = "success" | "error" | "active" | "idle";
 type TextState = {
   char: string;
@@ -25,7 +21,10 @@ const displayChars: Record<string, string> = {
   "\n": "⏎",
 };
 
-export function TypeTest({ text }: TypeTest) {
+type TypeTestProps = {
+  text: string;
+};
+export function TypeTest({ text }: TypeTestProps) {
   const [textState, setTextState] = useState<TextState>(() => {
     let ignore = false;
     let setIgnore = false;
@@ -74,6 +73,7 @@ export function TypeTest({ text }: TypeTest) {
           "PageDown",
           "PageUp",
           "Shift",
+          "CapsLock",
         ].includes(key)
       ) {
         return;
@@ -135,28 +135,26 @@ export function TypeTest({ text }: TypeTest) {
 
   return (
     <>
-      <div className="font-mono bg-slate-800 text-green-600 rounded-sm m-4 p-4 text-lg">
-        {textState.map(({ char, status, typedKey, displayChar }, index) => {
-          return (
-            <span
-              className={cn(
-                "pt-1 before:content-[attr(data-content)]",
-                characterColorMap[status]
-              )}
-              key={index}
-              data-content={
-                status === "active" && char === "\n"
-                  ? displayChar
-                  : status === "error" && char === "\n"
-                  ? typedKey
-                  : ""
-              }
-            >
-              {char === "\n" ? "\n" : typedKey || char}
-            </span>
-          );
-        })}
-      </div>
+      {textState.map(({ char, status, typedKey, displayChar }, index) => {
+        return (
+          <span
+            className={cn(
+              "pt-1 before:content-[attr(data-content)]",
+              characterColorMap[status]
+            )}
+            key={index}
+            data-content={
+              status === "active" && char === "\n"
+                ? displayChar
+                : status === "error" && char === "\n"
+                ? typedKey
+                : ""
+            }
+          >
+            {char === "\n" ? "\n" : typedKey || char}
+          </span>
+        );
+      })}
     </>
   );
 }

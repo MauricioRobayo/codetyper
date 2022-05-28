@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { TypeTest } from "../../components/TyperTest";
+import { TypeTest } from "../../components/TypeTest";
 import { useGist } from "../../hooks/useGist";
 import { useRawFile } from "../../hooks/useRawFile";
 
