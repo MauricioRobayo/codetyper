@@ -36,6 +36,8 @@ const UserPage = () => {
     );
   };
 
+  console.log(gists);
+
   return (
     <>
       <div>
@@ -46,9 +48,18 @@ const UserPage = () => {
         </div>
       </div>
       <ul>
-        {gists?.map(({ id, description }) => (
+        {gists?.map(({ id, description, files }) => (
           <li key={id}>
             <Link href={`/${username}/${id}`}>{description}</Link>
+            <ul>
+              {Object.values(files).map(({ raw_url, filename }) => (
+                <li key={raw_url}>
+                  <Link href={`/${username}/${id}#file-${filename}`}>
+                    {filename}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
