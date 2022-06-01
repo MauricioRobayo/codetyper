@@ -60,7 +60,6 @@ const GistPage: NextPage = () => {
   }, [gistFiles, filename]);
 
   if (rawFilesQuery.isSuccess && gistFile) {
-    console.log({ currentFileIndex });
     const text = rawFilesQuery.data[auto ? currentFileIndex : gistFile.index];
     return <TypeTest text={text} onFinish={onFinish} />;
   }
