@@ -31,14 +31,14 @@ const GistPage: NextPage = () => {
   }
 
   useEffect(() => {
-    if (!gistFiles || gistFiles.length === 0) {
+    if (!auto || !gistFiles || gistFiles.length === 0) {
       return;
     }
 
     router.push({
       hash: `file-${gistFiles[currentFileIndex].filename}`,
     });
-  }, [currentFileIndex, router, gistFiles]);
+  }, [auto, currentFileIndex, router, gistFiles]);
 
   const onFinish = () => {
     if (
