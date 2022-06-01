@@ -110,7 +110,7 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
         textState[currentIndex].typedKey = typedKey;
         setTextState([...textState]);
         setCurrentIndex(newIndex);
-        if (currentIndex === textState.length - 1) {
+        if (currentIndex === textState.length - 1 && typedKey === "\n") {
           onFinish();
         }
       }
@@ -151,10 +151,14 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
 }
 
 function textToObject(text: string): TextState {
+  const textWithEndMarker = text.endsWith("\n") ? text : `${text}\n`;
   let ignore = false;
   let setIgnore = false;
-  const textState: TextState = text
+  const textState: TextState = textWithEndMarker
     .replace(/[“”]/g, '"')
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/[—–]/g, "-")
+    .replace(/’/g, "'")
     .split("")
     .map((char, index) => {
       if (!setIgnore && char === "\n") {

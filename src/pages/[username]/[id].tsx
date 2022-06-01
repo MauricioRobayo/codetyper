@@ -1,33 +1,48 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TypeTest } from "../../components/TypeTest";
 import { useGist } from "../../hooks/useGist";
 import { useRawFiles } from "../../hooks/useRawFiles";
 
 const GistPage: NextPage = () => {
   const router = useRouter();
-  const [currentFileIndex, setCurrentFileIndex] = useState(0);
-  const id = router.query.id as string;
-  const username = router.query.username as string;
-  console.log({ username });
+  const { query, asPath } = router;
+  const id = query.id as string;
+  const username = query.username as string;
+  const auto = query.auto as string;
+  const filename = asPath.replace(/.*#/, "");
   const gistQuery = useGist(id);
-  const gistFilesRawUrls = useMemo(() => {
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
+  const gistFiles = useMemo(() => {
     if (gistQuery.data) {
-      return Object.values(gistQuery.data.files).map(({ raw_url }) => raw_url);
+      return Object.values(gistQuery.data.files);
     }
 
     return null;
   }, [gistQuery.data]);
 
-  const rawFilesQuery = useRawFiles(gistFilesRawUrls ?? []);
+  const rawFilesQuery = useRawFiles(
+    gistFiles?.map(({ raw_url }) => raw_url) ?? []
+  );
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
   }
 
+  useEffect(() => {
+    if (!gistFiles || gistFiles.length === 0) {
+      return;
+    }
+
+    router.push({
+      hash: `file-${gistFiles[currentFileIndex].filename}`,
+    });
+  }, [currentFileIndex, router, gistFiles]);
+
   const onFinish = () => {
     if (
+      !auto ||
       !rawFilesQuery.data ||
       currentFileIndex >= rawFilesQuery.data.length - 1
     ) {
@@ -38,13 +53,16 @@ const GistPage: NextPage = () => {
     setCurrentFileIndex(currentFileIndex + 1);
   };
 
-  if (rawFilesQuery.isSuccess) {
-    return (
-      <TypeTest
-        text={rawFilesQuery.data[currentFileIndex]}
-        onFinish={onFinish}
-      />
-    );
+  const gistFile = useMemo(() => {
+    return gistFiles
+      ?.map(({ filename }, index) => ({ filename, index }))
+      .find((gistFile) => gistFile.filename === filename.replace("file-", ""));
+  }, [gistFiles, filename]);
+
+  if (rawFilesQuery.isSuccess && gistFile) {
+    console.log({ currentFileIndex });
+    const text = rawFilesQuery.data[auto ? currentFileIndex : gistFile.index];
+    return <TypeTest text={text} onFinish={onFinish} />;
   }
 
   return <div>Loading...</div>;

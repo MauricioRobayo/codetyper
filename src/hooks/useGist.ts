@@ -23,8 +23,7 @@ export const useGist = (gistId: string) => {
     );
     return data;
   };
-
   return useQuery(["gist", gistId], () => fetchGist(gistId), {
-    enabled: gistId !== "",
+    enabled: typeof gistId === "string" && gistId !== "",
   });
 };
