@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import slugify from "slugify";
 import { TypeTest } from "../../components/TypeTest";
 import { useGist } from "../../hooks/useGist";
 import { useRawFiles } from "../../hooks/useRawFiles";
@@ -56,7 +57,11 @@ const GistPage: NextPage = () => {
   const gistFile = useMemo(() => {
     return gistFiles
       ?.map(({ filename }, index) => ({ filename, index }))
-      .find((gistFile) => gistFile.filename === filename.replace("file-", ""));
+      .find(
+        (gistFile) =>
+          gistFile.filename ===
+          decodeURIComponent(filename.replace("file-", ""))
+      );
   }, [gistFiles, filename]);
 
   if (rawFilesQuery.isSuccess && gistFile) {
