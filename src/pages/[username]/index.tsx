@@ -28,13 +28,7 @@ const UserPage = () => {
 
     const randomIndex = Math.floor(Math.random() * gists.length);
     const gistPath = `/${username}/${gists[randomIndex].id}`;
-    router.push(
-      {
-        pathname: gistPath,
-        search: "auto=true",
-      },
-      gistPath
-    );
+    router.push(gistPath);
   };
 
   return (
