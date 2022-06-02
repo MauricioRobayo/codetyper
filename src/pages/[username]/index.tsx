@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import slugify from "@sindresorhus/slugify";
 import { Button } from "../../components/Button";
 import { Gist } from "../../hooks/useGist";
 import { useGists } from "../../hooks/useGists";
@@ -52,7 +53,11 @@ const UserPage = () => {
             <ul>
               {Object.values(files).map(({ raw_url, filename }) => (
                 <li key={raw_url}>
-                  <Link href={`/${username}/${id}#file-${filename}`}>
+                  <Link
+                    href={`/${username}/${id}#${generateFilenameSlug(
+                      filename
+                    )}`}
+                  >
                     {filename}
                   </Link>
                 </li>
@@ -64,5 +69,9 @@ const UserPage = () => {
     </>
   );
 };
+
+export function generateFilenameSlug(filename: string): string {
+  return `file-${slugify(filename)}`;
+}
 
 export default UserPage;
