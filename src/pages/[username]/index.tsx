@@ -36,8 +36,6 @@ const UserPage = () => {
     );
   };
 
-  console.log(gists);
-
   return (
     <>
       <div>
