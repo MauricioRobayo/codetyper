@@ -70,7 +70,7 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
         }
 
         let newIndex = Math.max(0, currentIndex - 1);
-        while (textState[newIndex].ignore) {
+        while (textState[newIndex]?.ignore) {
           newIndex--;
         }
 
@@ -79,11 +79,13 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
         return;
       }
 
+      const currentCharState = textState[currentIndex];
+
       if (
-        (key === "Enter" && textState[currentIndex].char === "\n") ||
-        key === textState[currentIndex].char
+        (key === "Enter" && currentCharState?.char === "\n") ||
+        key === currentCharState?.char
       ) {
-        updateState(textState, "success", textState[currentIndex].char);
+        updateState(textState, "success", currentCharState.char);
         return;
       }
 
@@ -91,7 +93,7 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
 
       function calculateNewIndex(textState: TextState) {
         let newIndex = Math.min(textState.length - 1, currentIndex + 1);
-        while (textState[newIndex].ignore) {
+        while (textState[newIndex]?.ignore) {
           newIndex++;
         }
         return newIndex;
@@ -104,10 +106,15 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
         index?: number
       ) {
         const newIndex = index ?? calculateNewIndex(textState);
-        textState[newIndex].status = "active";
-        textState[newIndex].typedKey = "";
-        textState[currentIndex].status = status;
-        textState[currentIndex].typedKey = typedKey;
+        const newCharState = textState[newIndex];
+        const currentCharState = textState[currentIndex];
+
+        if (newCharState && currentCharState) {
+          newCharState.status = "active";
+          newCharState.typedKey = "";
+          currentCharState.status = status;
+          currentCharState.typedKey = typedKey;
+        }
         setTextState([...textState]);
         setCurrentIndex(newIndex);
         if (currentIndex === textState.length - 1 && typedKey === "\n") {

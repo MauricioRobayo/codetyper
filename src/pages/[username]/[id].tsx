@@ -38,12 +38,15 @@ const GistPage: NextPage = () => {
     }
 
     const nextFileIndex = currentFileIndex + 1;
-    setCurrentFileIndex(nextFileIndex);
-    const hash = generateFilenameSlug(gistFiles[nextFileIndex].filename);
-    setFileSlug(hash);
-    router.push({ hash });
-  };
+    const currentGistFile = gistFiles[nextFileIndex];
 
+    if (currentGistFile) {
+      setCurrentFileIndex(nextFileIndex);
+      const hash = generateFilenameSlug(currentGistFile.filename);
+      setFileSlug(hash);
+      router.push({ hash });
+    }
+  };
   const gistFile = useMemo(() => {
     if (fileSlug === null) {
       return;
@@ -61,14 +64,19 @@ const GistPage: NextPage = () => {
       setAutoAdvanceFile(!fileSlugFromHash);
     }
 
-    if (isReady && gistFiles && !fileSlugFromHash) {
-      const hash = generateFilenameSlug(gistFiles[currentFileIndex].filename);
-      setFileSlug(hash);
-      router.push({ hash });
+    if (isReady && fileSlugFromHash) {
+      setFileSlug(fileSlugFromHash);
       return;
     }
 
-    setFileSlug(fileSlugFromHash);
+    if (isReady && gistFiles) {
+      const currentGistFile = gistFiles[currentFileIndex];
+      if (currentGistFile) {
+        const hash = generateFilenameSlug(currentGistFile.filename);
+        setFileSlug(hash);
+        router.push({ hash });
+      }
+    }
   }, [asPath, autoAdvanceFile, currentFileIndex, gistFiles, isReady, router]);
 
   if (rawFilesQuery.isError || gistQuery.isError) {
