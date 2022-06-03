@@ -60,7 +60,7 @@ export const useRawFiles = (
     return result;
   }
 
-  const isSuccess = queries.some(({ isSuccess }) => isSuccess);
+  const isSuccess = queries.every(({ isSuccess }) => isSuccess);
   if (isSuccess) {
     const data = queries.map(({ data }) => data).filter(isString);
     const result: QuerySuccess = {
