@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import slugify from "@sindresorhus/slugify";
+import slug from "slug";
 import { Button } from "../../components/Button";
 import { Gist } from "../../hooks/useGist";
 import { useGists } from "../../hooks/useGists";
@@ -65,7 +65,7 @@ const UserPage = () => {
 };
 
 export function generateFilenameSlug(filename: string): string {
-  return `file-${slugify(filename)}`;
+  return `file-${slug(filename, { charmap: { ".": "-", _: "_" } })}`;
 }
 
 export default UserPage;
