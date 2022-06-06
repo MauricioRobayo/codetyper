@@ -43,7 +43,9 @@ const UserPage = () => {
       <ul>
         {gists?.map(({ id, description, files }) => (
           <li key={id}>
-            <Link href={`/${username}/${id}`}>{description}</Link>
+            <Link href={`/${username}/${id}`}>
+              <a>{description}</a>
+            </Link>
             <ul>
               {Object.values(files).map(({ raw_url, filename }) => (
                 <li key={raw_url}>
@@ -52,7 +54,7 @@ const UserPage = () => {
                       filename
                     )}`}
                   >
-                    {filename}
+                    <a>{filename}</a>
                   </Link>
                 </li>
               ))}
