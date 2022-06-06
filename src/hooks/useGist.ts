@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import axios from "axios";
 
-interface GistFile {
+export interface GistFile {
   filename: string;
   type: string;
   language: string;

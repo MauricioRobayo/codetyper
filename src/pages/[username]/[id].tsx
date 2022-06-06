@@ -1,18 +1,16 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../components/TypeTest";
+import { useCurrentGistFile } from "../../hooks/useFileSlug";
 import { useGist } from "../../hooks/useGist";
 import { useRawFiles } from "../../hooks/useRawFiles";
 
 const GistPage: NextPage = () => {
-  const [fileSlug, setFileSlug] = useState<string | null>(null);
-  const [autoAdvanceFile, setAutoAdvanceFile] = useState<boolean | null>(null);
   const router = useRouter();
-  const { query, asPath, isReady } = router;
-  const id = query.id as string;
-  const username = query.username as string;
+  const id = router.query.id as string;
+  const username = router.query.username as string;
   const gistQuery = useGist(id);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const gistFiles = useMemo(() => {
@@ -25,6 +23,11 @@ const GistPage: NextPage = () => {
   const rawFilesQuery = useRawFiles(
     gistFiles?.map(({ raw_url }) => raw_url) ?? []
   );
+  const {
+    state: { gistFile, autoAdvanceFile },
+    setFileSlug,
+  } = useCurrentGistFile(gistFiles, currentFileIndex);
+
   const onFinish = () => {
     if (
       !gistFiles ||
@@ -47,37 +50,6 @@ const GistPage: NextPage = () => {
       router.push({ hash });
     }
   };
-  const gistFile = useMemo(() => {
-    if (fileSlug === null) {
-      return;
-    }
-
-    return gistFiles
-      ?.map(({ filename }, index) => ({ filename, index }))
-      .find((gistFile) => generateFilenameSlug(gistFile.filename) === fileSlug);
-  }, [gistFiles, fileSlug]);
-
-  useEffect(() => {
-    const [, fileSlugFromHash] = asPath.split("#");
-
-    if (isReady && autoAdvanceFile === null) {
-      setAutoAdvanceFile(!fileSlugFromHash);
-    }
-
-    if (isReady && fileSlugFromHash) {
-      setFileSlug(fileSlugFromHash);
-      return;
-    }
-
-    if (isReady && gistFiles) {
-      const currentGistFile = gistFiles[currentFileIndex];
-      if (currentGistFile) {
-        const hash = generateFilenameSlug(currentGistFile.filename);
-        setFileSlug(hash);
-        router.push({ hash });
-      }
-    }
-  }, [asPath, autoAdvanceFile, currentFileIndex, gistFiles, isReady, router]);
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
