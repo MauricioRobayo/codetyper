@@ -34,11 +34,7 @@ const UserPage = () => {
   return (
     <>
       <div>
-        <div className="flex items-center justify-between">
-          <Button onClick={startRandomTypeTest}>
-            Start Random Typing Test
-          </Button>
-        </div>
+        <Button onClick={startRandomTypeTest}>Start Random Typing Test</Button>
       </div>
       <ul>
         {gists?.map(({ id, description, files }) => (

@@ -1,4 +1,3 @@
-import cn from "classnames";
 import { useEffect, useState } from "react";
 
 type CharacterStatus = "success" | "error" | "active" | "idle";
@@ -9,13 +8,6 @@ type TextState = {
   typedKey: string;
   ignore: boolean;
 }[];
-
-const characterColorMap: Record<CharacterStatus, string> = {
-  error: "text-red-400 font-bold",
-  idle: "",
-  success: "text-green-300",
-  active: "bg-green-300",
-};
 
 const displayChars: Record<string, string> = {
   "\n": "⏎",
@@ -136,10 +128,6 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
       {textState.map(({ char, status, typedKey, displayChar }, index) => {
         return (
           <span
-            className={cn(
-              "pt-1 before:content-[attr(data-content)]",
-              characterColorMap[status]
-            )}
             key={index}
             data-content={
               status === "active" && char === "\n"
