@@ -1,4 +1,4 @@
-import { Button, List } from "@mantine/core";
+import { Anchor, Button, List, Text } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -12,8 +12,6 @@ const UserPage = () => {
   const username = router.query.username as string;
 
   const gistsQuery = useGists(username, { onSuccess: setGists });
-
-  console.log(gistsQuery);
 
   if (gistsQuery.isLoading) {
     return <div>Loading...</div>;
@@ -41,8 +39,8 @@ const UserPage = () => {
       <List spacing="lg">
         {gists?.map(({ id, description, files }) => (
           <List.Item key={id}>
-            <Link href={`/${username}/${id}`}>
-              <a>{description}</a>
+            <Link href={`/${username}/${id}`} passHref>
+              <Anchor variant="text">{description}</Anchor>
             </Link>
             <List withPadding>
               {Object.values(files).map(({ raw_url, filename }) => (
@@ -51,8 +49,9 @@ const UserPage = () => {
                     href={`/${username}/${id}#${generateFilenameSlug(
                       filename
                     )}`}
+                    passHref
                   >
-                    <a>{filename}</a>
+                    <Anchor variant="text">{filename}</Anchor>
                   </Link>
                 </List.Item>
               ))}
