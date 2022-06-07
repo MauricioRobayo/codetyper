@@ -1,5 +1,6 @@
+import { Button, Center, Group, Input, InputWrapper } from "@mantine/core";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 const GistForm = () => {
   const [username, setUsername] = useState("");
@@ -9,30 +10,31 @@ const GistForm = () => {
     setUsername(e.target.value);
   };
 
-  const getGists = () => {
+  const onHandleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     router.push(`/${username}`);
   };
 
   return (
-    <div>
-      <div>
-        <div>
-          <label htmlFor="username">GitHub Username</label>
-          <input
-            id="username"
-            type="text"
-            placeholder="GitHub Username"
-            value={username}
-            onChange={onChangeUsername}
-          />
-        </div>
-        <div>
-          <button type="button" onClick={getGists}>
-            Get Gists
-          </button>
-        </div>
-      </div>
-    </div>
+    <Center>
+      <form onSubmit={onHandleSubmit} action="#">
+        <Group direction="column">
+          <InputWrapper
+            id="github-username"
+            label="GitHub Username"
+            description="Please enter your GitHub username to get your gists."
+          >
+            <Input
+              id="github-username"
+              placeholder="GitHub username"
+              value={username}
+              onChange={onChangeUsername}
+            />
+          </InputWrapper>
+          <Button type="submit">Get Gists</Button>
+        </Group>
+      </form>
+    </Center>
   );
 };
 

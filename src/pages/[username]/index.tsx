@@ -1,8 +1,8 @@
+import { Button, List } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
-import { Button } from "../../components/Button";
 import { Gist } from "../../hooks/useGist";
 import { useGists } from "../../hooks/useGists";
 
@@ -12,6 +12,8 @@ const UserPage = () => {
   const username = router.query.username as string;
 
   const gistsQuery = useGists(username, { onSuccess: setGists });
+
+  console.log(gistsQuery);
 
   if (gistsQuery.isLoading) {
     return <div>Loading...</div>;
@@ -36,15 +38,15 @@ const UserPage = () => {
       <div>
         <Button onClick={startRandomTypeTest}>Start Random Typing Test</Button>
       </div>
-      <ul>
+      <List spacing="lg">
         {gists?.map(({ id, description, files }) => (
-          <li key={id}>
+          <List.Item key={id}>
             <Link href={`/${username}/${id}`}>
               <a>{description}</a>
             </Link>
-            <ul>
+            <List withPadding>
               {Object.values(files).map(({ raw_url, filename }) => (
-                <li key={raw_url}>
+                <List.Item key={raw_url}>
                   <Link
                     href={`/${username}/${id}#${generateFilenameSlug(
                       filename
@@ -52,12 +54,12 @@ const UserPage = () => {
                   >
                     <a>{filename}</a>
                   </Link>
-                </li>
+                </List.Item>
               ))}
-            </ul>
-          </li>
+            </List>
+          </List.Item>
         ))}
-      </ul>
+      </List>
     </>
   );
 };

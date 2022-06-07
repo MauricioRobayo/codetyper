@@ -16,8 +16,9 @@ const displayChars: Record<string, string> = {
 type TypeTestProps = {
   text: string;
   onFinish: () => void;
+  classes?: Record<CharacterStatus | "background", string>;
 };
-export function TypeTest({ text, onFinish }: TypeTestProps) {
+export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
   const [textState, setTextState] = useState<TextState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -124,24 +125,21 @@ export function TypeTest({ text, onFinish }: TypeTestProps) {
   }
 
   return (
-    <>
+    <pre className={classes ? classes.background : ""}>
       {textState.map(({ char, status, typedKey, displayChar }, index) => {
+        const displayedEndOfLine: string = {
+          active: `${displayChar}\n`,
+          error: `${typedKey}\n`,
+          idle: `\n`,
+          success: `\n`,
+        }[status];
         return (
-          <span
-            key={index}
-            data-content={
-              status === "active" && char === "\n"
-                ? displayChar
-                : status === "error" && char === "\n"
-                ? typedKey
-                : ""
-            }
-          >
-            {char === "\n" ? "\n" : typedKey || char}
+          <span key={index} className={classes ? classes[status] : ""}>
+            {char === "\n" ? displayedEndOfLine : typedKey || char}
           </span>
         );
       })}
-    </>
+    </pre>
   );
 }
 

@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           withGlobalStyles
           withNormalizeCSS
           theme={{
-            colorScheme: "light",
+            colorScheme: "dark",
           }}
         >
           <Component {...pageProps} />
