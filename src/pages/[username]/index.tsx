@@ -7,7 +7,6 @@ import {
   Container,
   Group,
   List,
-  MediaQuery,
   Title,
 } from "@mantine/core";
 import Link from "next/link";
@@ -45,7 +44,9 @@ const UserPage = () => {
   return (
     <>
       <Center my="lg">
-        <Button onClick={startRandomTypeTest}>Start Random Gist</Button>
+        <Button onClick={startRandomTypeTest}>
+          Start Typing a Random Gist
+        </Button>
       </Center>
       <Container>
         <List spacing="lg" listStyleType="none">

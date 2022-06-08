@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Character from "./Character";
 
 type CharacterStatus = "success" | "error" | "active" | "idle";
 type TextState = {
@@ -32,7 +33,8 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
       return;
     }
 
-    const handleKeydown = ({ key, ctrlKey, altKey }: KeyboardEvent) => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      const { key, ctrlKey, altKey } = e;
       if (
         altKey ||
         ctrlKey ||
@@ -42,6 +44,7 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
           "ArrowLeft",
           "ArrowRight",
           "ArrowUp",
+          "CapsLock",
           "Control",
           "Delete",
           "End",
@@ -51,11 +54,13 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
           "PageDown",
           "PageUp",
           "Shift",
-          "CapsLock",
+          "Tab",
         ].includes(key)
       ) {
         return;
       }
+
+      e.preventDefault();
 
       if (key === "Backspace") {
         if (currentIndex === 0) {
@@ -74,15 +79,11 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
 
       const currentCharState = textState[currentIndex];
 
-      if (
+      const success =
         (key === "Enter" && currentCharState?.char === "\n") ||
-        key === currentCharState?.char
-      ) {
-        updateState(textState, "success", currentCharState.char);
-        return;
-      }
+        key === currentCharState?.char;
 
-      updateState(textState, "error", [" ", "Enter"].includes(key) ? "_" : key);
+      updateState(textState, success ? "success" : "error", key);
 
       function calculateNewIndex(textState: TextState) {
         let newIndex = Math.min(textState.length - 1, currentIndex + 1);
@@ -106,11 +107,11 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
           newCharState.status = "active";
           newCharState.typedKey = "";
           currentCharState.status = status;
-          currentCharState.typedKey = typedKey;
+          currentCharState.typedKey = typedKey === "Enter" ? " " : typedKey;
         }
         setTextState([...textState]);
         setCurrentIndex(newIndex);
-        if (currentIndex === textState.length - 1 && typedKey === "\n") {
+        if (currentIndex === textState.length - 1 && typedKey === "Enter") {
           onFinish();
         }
       }
@@ -134,9 +135,12 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
           success: `\n`,
         }[status];
         return (
-          <span key={index} className={classes ? classes[status] : ""}>
-            {char === "\n" ? displayedEndOfLine : typedKey || char}
-          </span>
+          <Character
+            key={index}
+            className={classes ? classes[status] : ""}
+            textChar={char}
+            typedKey={char === "\n" ? displayedEndOfLine : typedKey}
+          />
         );
       })}
     </pre>
