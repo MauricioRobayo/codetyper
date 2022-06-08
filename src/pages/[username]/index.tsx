@@ -1,4 +1,15 @@
-import { Anchor, Button, List, Text } from "@mantine/core";
+import {
+  Anchor,
+  Badge,
+  Button,
+  Card,
+  Center,
+  Container,
+  Group,
+  List,
+  MediaQuery,
+  Title,
+} from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -33,32 +44,56 @@ const UserPage = () => {
 
   return (
     <>
-      <div>
-        <Button onClick={startRandomTypeTest}>Start Random Typing Test</Button>
-      </div>
-      <List spacing="lg">
-        {gists?.map(({ id, description, files }) => (
-          <List.Item key={id}>
-            <Link href={`/${username}/${id}`} passHref>
-              <Anchor variant="text">{description}</Anchor>
-            </Link>
-            <List withPadding>
-              {Object.values(files).map(({ raw_url, filename }) => (
-                <List.Item key={raw_url}>
-                  <Link
-                    href={`/${username}/${id}#${generateFilenameSlug(
-                      filename
-                    )}`}
-                    passHref
-                  >
-                    <Anchor variant="text">{filename}</Anchor>
-                  </Link>
-                </List.Item>
-              ))}
-            </List>
-          </List.Item>
-        ))}
-      </List>
+      <Center my="lg">
+        <Button onClick={startRandomTypeTest}>Start Random Gist</Button>
+      </Center>
+      <Container>
+        <List spacing="lg" listStyleType="none">
+          {gists?.map(({ id, description, files }) => {
+            return (
+              <List.Item key={id}>
+                <Card>
+                  {description ? (
+                    <Title
+                      order={2}
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      mb="sm"
+                    >
+                      <Link href={`/${username}/${id}`} passHref>
+                        <Anchor variant="text">{description}</Anchor>
+                      </Link>
+                    </Title>
+                  ) : null}
+                  <Group spacing="xs">
+                    {Object.values(files).map(({ raw_url, filename }) => (
+                      <Link
+                        key={raw_url}
+                        href={`/${username}/${id}#${generateFilenameSlug(
+                          filename
+                        )}`}
+                        passHref
+                      >
+                        <Anchor variant="text">
+                          <Badge
+                            size="sm"
+                            sx={{ "&:hover": { cursor: "pointer" } }}
+                          >
+                            {filename}
+                          </Badge>
+                        </Anchor>
+                      </Link>
+                    ))}
+                  </Group>
+                </Card>
+              </List.Item>
+            );
+          })}
+        </List>
+      </Container>
     </>
   );
 };
