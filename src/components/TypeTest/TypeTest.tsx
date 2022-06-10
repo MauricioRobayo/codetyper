@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { start } from "repl";
 import Character from "./Character";
 
 type CharacterStatus = "success" | "error" | "corrected" | null;
@@ -16,11 +15,15 @@ const displayChars: Record<string, string> = {
   "\n": "⏎",
 };
 
-type TypingTestResult = {
+export type TypingTestResult = {
   errors: number;
+  corrects: number;
+  corrected: number;
   netWPM: number;
   grossWPM: number;
   accuracy: number;
+  minutes: number;
+  seconds: number;
 };
 type TypingTestProps = {
   text: string;
@@ -237,8 +240,30 @@ function calculateNewIndex(textState: TextState, currentIndex: number) {
 
 function calculateResults(
   textState: TextState,
-  startTime: number,
-  endTime: number
+  startTimeMs: number,
+  endTimeMs: number
 ): TypingTestResult {
-  throw new Error("Function not implemented.");
+  const durationInSeconds = (endTimeMs - startTimeMs) / 1000;
+  const minutes = durationInSeconds / 60;
+  const seconds = durationInSeconds % 60;
+  const errors = textState.filter(({ status }) => status === "error").length;
+  const corrected = textState.filter(
+    ({ status }) => status === "corrected"
+  ).length;
+  const corrects = textState.filter(
+    ({ status }) => status === "success"
+  ).length;
+  const grossWPM = Math.round(textState.length / 5 / minutes);
+  const netWPM = Math.round(grossWPM - errors / minutes);
+  const accuracy = corrects / textState.length;
+  return {
+    errors,
+    corrects,
+    corrected,
+    grossWPM,
+    netWPM,
+    accuracy,
+    minutes: Math.floor(minutes),
+    seconds: Math.floor(seconds),
+  };
 }

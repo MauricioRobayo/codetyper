@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../components/TypeTest";
+import { TypingTestResult } from "../../components/TypeTest/TypeTest";
 import { useCurrentGistFile } from "../../hooks/useFileSlug";
 import { useGist } from "../../hooks/useGist";
 import { useRawFiles } from "../../hooks/useRawFiles";
@@ -28,7 +29,7 @@ const GistPage: NextPage = () => {
     setFileSlug,
   } = useCurrentGistFile(gistFiles, currentFileIndex);
 
-  const onFinish = () => {
+  const onFinish = (results: TypingTestResult) => {
     if (
       !gistFiles ||
       gistFiles.length === 0 ||
@@ -36,7 +37,8 @@ const GistPage: NextPage = () => {
       !rawFilesQuery.data ||
       currentFileIndex >= rawFilesQuery.data.length - 1
     ) {
-      router.push(`/${username}`);
+      alert(JSON.stringify(results, null, 2));
+      // router.push(`/${username}`);
       return;
     }
 
