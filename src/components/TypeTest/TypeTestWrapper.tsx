@@ -1,9 +1,9 @@
 import { Center, createStyles, MantineTheme } from "@mantine/core";
-import { TypingTest } from "./TypeTest";
+import { TypingTest, TypingTestResult } from "./TypeTest";
 
 type TypeTestWrapperProps = {
   text: string;
-  onFinish: () => void;
+  onFinish: (results: TypingTestResult) => void;
 };
 export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
   const useStyles = createStyles((theme: MantineTheme) => ({
