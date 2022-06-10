@@ -1,27 +1,40 @@
 import { useEffect, useState } from "react";
+import { start } from "repl";
 import Character from "./Character";
 
-type CharacterStatus = "success" | "error" | "active" | "idle";
+type CharacterStatus = "success" | "error" | "corrected" | null;
 type TextState = {
   char: string;
   displayChar: string;
   status: CharacterStatus;
   typedKey: string;
   ignore: boolean;
+  isActive: boolean;
 }[];
 
 const displayChars: Record<string, string> = {
   "\n": "⏎",
 };
 
-type TypeTestProps = {
-  text: string;
-  onFinish: () => void;
-  classes?: Record<CharacterStatus | "background", string>;
+type TypingTestResult = {
+  errors: number;
+  netWPM: number;
+  grossWPM: number;
+  accuracy: number;
 };
-export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
+type TypingTestProps = {
+  text: string;
+  onFinish: (results: TypingTestResult) => void;
+  classes?: Record<
+    NonNullable<CharacterStatus> | "background" | "active",
+    string
+  >;
+};
+export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
   const [textState, setTextState] = useState<TextState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -62,6 +75,11 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
 
       e.preventDefault();
 
+      if (!isTyping) {
+        setIsTyping(true);
+        setStartTime(Date.now());
+      }
+
       if (key === "Backspace") {
         if (currentIndex === 0) {
           return;
@@ -73,53 +91,71 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
         }
 
         setCurrentIndex(newIndex);
-        updateState(textState, "idle", "", newIndex);
+        updateState({ textState, typedKey: "", index: newIndex });
         return;
       }
 
       const currentCharState = textState[currentIndex];
 
-      const success =
+      let newCharStatus: CharacterStatus = null;
+      if (
         (key === "Enter" && currentCharState?.char === "\n") ||
-        key === currentCharState?.char;
-
-      updateState(textState, success ? "success" : "error", key);
-
-      function calculateNewIndex(textState: TextState) {
-        let newIndex = Math.min(textState.length - 1, currentIndex + 1);
-        while (textState[newIndex]?.ignore) {
-          newIndex++;
-        }
-        return newIndex;
+        key === currentCharState?.char
+      ) {
+        newCharStatus = "success";
+      } else {
+        newCharStatus = "error";
       }
 
-      function updateState(
-        textState: TextState,
-        status: CharacterStatus,
-        typedKey: string,
-        index?: number
+      if (
+        newCharStatus === "success" &&
+        (currentCharState?.status === "error" ||
+          currentCharState?.status === "corrected")
       ) {
-        const newIndex = index ?? calculateNewIndex(textState);
+        newCharStatus = "corrected";
+      }
+
+      updateState({ textState, status: newCharStatus, typedKey: key });
+
+      function updateState({
+        textState,
+        status,
+        typedKey,
+        index,
+      }: {
+        textState: TextState;
+        status?: NonNullable<CharacterStatus>;
+        typedKey: string;
+        index?: number;
+      }) {
+        const newIndex = index ?? calculateNewIndex(textState, currentIndex);
         const newCharState = textState[newIndex];
         const currentCharState = textState[currentIndex];
 
         if (newCharState && currentCharState) {
-          newCharState.status = "active";
+          newCharState.isActive = true;
           newCharState.typedKey = "";
-          currentCharState.status = status;
+          currentCharState.isActive = false;
+          currentCharState.status = status ?? currentCharState.status;
           currentCharState.typedKey = typedKey === "Enter" ? " " : typedKey;
         }
         setTextState([...textState]);
         setCurrentIndex(newIndex);
         if (currentIndex === textState.length - 1 && typedKey === "Enter") {
-          onFinish();
+          if (!startTime) {
+            throw Error("This should not happen, no start time!");
+          }
+          setIsTyping(false);
+          const endTime = Date.now();
+          const results = calculateResults(textState, startTime, endTime);
+          onFinish(results);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [currentIndex, textState, onFinish]);
+  }, [currentIndex, textState, onFinish, isTyping, startTime]);
 
   if (textState === null) {
     return null;
@@ -127,22 +163,34 @@ export function TypeTest({ text, onFinish, classes }: TypeTestProps) {
 
   return (
     <pre className={classes ? classes.background : ""}>
-      {textState.map(({ char, status, typedKey, displayChar }, index) => {
-        const displayedEndOfLine: string = {
-          active: `${displayChar}\n`,
-          error: `${typedKey}\n`,
-          idle: `\n`,
-          success: `\n`,
-        }[status];
-        return (
-          <Character
-            key={index}
-            className={classes ? classes[status] : ""}
-            textChar={char}
-            typedKey={char === "\n" ? displayedEndOfLine : typedKey}
-          />
-        );
-      })}
+      {textState.map(
+        ({ char, status, typedKey, displayChar, isActive }, index) => {
+          const displayedEndOfLine: string = isActive
+            ? `${displayChar}\n`
+            : {
+                error: `${typedKey}\n`,
+                idle: `\n`,
+                success: `\n`,
+                corrected: "\n",
+              }[status ?? "idle"];
+          return (
+            <Character
+              key={index}
+              className={
+                classes && index <= currentIndex
+                  ? isActive
+                    ? classes["active"]
+                    : status
+                    ? classes[status]
+                    : ""
+                  : ""
+              }
+              textChar={char}
+              typedKey={char === "\n" ? displayedEndOfLine : typedKey}
+            />
+          );
+        }
+      )}
     </pre>
   );
 }
@@ -170,10 +218,27 @@ function textToObject(text: string): TextState {
       return {
         char,
         displayChar: displayChars[char] ?? char,
-        status: index === 0 ? "active" : "idle",
+        status: null,
         typedKey: "",
         ignore,
+        isActive: index === 0,
       };
     });
   return textState;
+}
+
+function calculateNewIndex(textState: TextState, currentIndex: number) {
+  let newIndex = Math.min(textState.length - 1, currentIndex + 1);
+  while (textState[newIndex]?.ignore) {
+    newIndex++;
+  }
+  return newIndex;
+}
+
+function calculateResults(
+  textState: TextState,
+  startTime: number,
+  endTime: number
+): TypingTestResult {
+  throw new Error("Function not implemented.");
 }

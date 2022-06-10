@@ -1,12 +1,5 @@
-import {
-  Center,
-  Code,
-  createStyles,
-  CSSObject,
-  MantineTheme,
-  Text,
-} from "@mantine/core";
-import { TypeTest } from "./TypeTest";
+import { Center, createStyles, MantineTheme } from "@mantine/core";
+import { TypingTest } from "./TypeTest";
 
 type TypeTestWrapperProps = {
   text: string;
@@ -19,14 +12,15 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
       fontWeight: "bold",
       textDecoration: "underline",
     },
-    idle: {
-      color: "inherit",
-    },
     success: {
       color: theme.colors.lime[4],
     },
     active: {
-      backgroundColor: theme.colors.lime[6],
+      backgroundColor: theme.colors.lime[8],
+      color: "inherit",
+    },
+    corrected: {
+      backgroundColor: theme.colors.yellow[6],
     },
     background: {
       whiteSpace: "pre-wrap",
@@ -41,7 +35,7 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
 
   return (
     <Center>
-      <TypeTest text={text} onFinish={onFinish} classes={classes} />
+      <TypingTest text={text} onFinish={onFinish} classes={classes} />
     </Center>
   );
 };
