@@ -12,7 +12,7 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
       fontWeight: "bold",
       textDecoration: "underline",
     },
-    success: {
+    correct: {
       color: theme.colors.lime[4],
     },
     active: {

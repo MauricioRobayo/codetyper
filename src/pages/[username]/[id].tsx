@@ -30,22 +30,12 @@ const GistPage: NextPage = () => {
   } = useCurrentGistFile(gistFiles, currentFileIndex);
 
   const onFinish = (results: TypingTestResult) => {
-    if (
-      !gistFiles ||
-      gistFiles.length === 0 ||
-      !autoAdvanceFile ||
-      !rawFilesQuery.data ||
-      currentFileIndex >= rawFilesQuery.data.length - 1
-    ) {
-      alert(JSON.stringify(results, null, 2));
-      // router.push(`/${username}`);
-      return;
-    }
+    alert(JSON.stringify(results, null, 2));
 
     const nextFileIndex = currentFileIndex + 1;
-    const currentGistFile = gistFiles[nextFileIndex];
+    const currentGistFile = gistFiles?.[nextFileIndex];
 
-    if (currentGistFile) {
+    if (currentGistFile && autoAdvanceFile) {
       setCurrentFileIndex(nextFileIndex);
       const hash = generateFilenameSlug(currentGistFile.filename);
       setFileSlug(hash);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Character from "./Character";
 
-type CharacterStatus = "success" | "error" | "corrected" | null;
+type CharacterStatus = "correct" | "error" | "corrected" | null;
 type TextState = {
   char: string;
   displayChar: string;
@@ -105,13 +105,13 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
         (key === "Enter" && currentCharState?.char === "\n") ||
         key === currentCharState?.char
       ) {
-        newCharStatus = "success";
+        newCharStatus = "correct";
       } else {
         newCharStatus = "error";
       }
 
       if (
-        newCharStatus === "success" &&
+        newCharStatus === "correct" &&
         (currentCharState?.status === "error" ||
           currentCharState?.status === "corrected")
       ) {
@@ -173,7 +173,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
             : {
                 error: `${typedKey}\n`,
                 idle: `\n`,
-                success: `\n`,
+                correct: `\n`,
                 corrected: "\n",
               }[status ?? "idle"];
           return (
@@ -251,11 +251,11 @@ function calculateResults(
     ({ status }) => status === "corrected"
   ).length;
   const corrects = textState.filter(
-    ({ status }) => status === "success"
+    ({ status }) => status === "correct"
   ).length;
   const grossWPM = Math.round(textState.length / 5 / minutes);
   const netWPM = Math.round(grossWPM - errors / minutes);
-  const accuracy = corrects / textState.length;
+  const accuracy = Math.round((corrects / textState.length) * 100);
   return {
     errors,
     corrects,
