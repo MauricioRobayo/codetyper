@@ -17,10 +17,11 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
     },
     active: {
       backgroundColor: theme.colors.lime[8],
-      color: "inherit",
+      color: theme.colors.lime[2],
     },
     corrected: {
-      backgroundColor: theme.colors.yellow[6],
+      backgroundColor: theme.fn.rgba(theme.colors.yellow[6], 0.25),
+      color: theme.colors.lime[4],
     },
     background: {
       whiteSpace: "pre-wrap",
