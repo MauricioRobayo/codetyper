@@ -1,4 +1,4 @@
-import { Center, createStyles, MantineTheme } from "@mantine/core";
+import { Container, createStyles, MantineTheme } from "@mantine/core";
 import { TypingTest, TypingTestResult } from "./TypeTest";
 
 type TypeTestWrapperProps = {
@@ -35,8 +35,8 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
   const { classes } = useStyles();
 
   return (
-    <Center>
+    <Container>
       <TypingTest text={text} onFinish={onFinish} classes={classes} />
-    </Center>
+    </Container>
   );
 };
