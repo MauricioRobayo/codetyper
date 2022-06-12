@@ -38,6 +38,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [hasFinished, setHasFinished] = useState(false);
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -149,6 +150,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
             throw Error("This should not happen, no start time!");
           }
           setIsTyping(false);
+          setHasFinished(true);
           const endTime = Date.now();
           const results = calculateResults(textState, startTime, endTime);
           onFinish(results);
@@ -156,9 +158,11 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
       }
     };
 
-    window.addEventListener("keydown", handleKeydown);
+    if (!hasFinished) {
+      window.addEventListener("keydown", handleKeydown);
+    }
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [currentIndex, textState, onFinish, isTyping, startTime]);
+  }, [currentIndex, textState, onFinish, isTyping, startTime, hasFinished]);
 
   if (textState === null) {
     return null;
