@@ -11,7 +11,6 @@ import { useRawFiles } from "../../hooks/useRawFiles";
 const GistPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const username = router.query.username as string;
   const gistQuery = useGist(id);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const gistFiles = useMemo(() => {
