@@ -53,7 +53,14 @@ const GistPage: NextPage = () => {
       return <div>No text found!</div>;
     }
 
-    return <TypeTest text={text} onFinish={onFinish} />;
+    return (
+      <>
+        <header></header>
+        <main>
+          <TypeTest text={text} onFinish={onFinish} />;
+        </main>
+      </>
+    );
   }
 
   return <div>Loading...</div>;

@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useQueries } from "react-query";
+import { fetchRawFile } from "./useRawFile";
 
 type QuerySuccess = {
   errors: undefined;
@@ -31,11 +31,6 @@ type QueryResult = {
 export const useRawFiles = (
   urls: string[]
 ): QuerySuccess | QueryError | QueryResult => {
-  const fetchRawFile = async (url: string) => {
-    const { data } = await axios.get<string>(url);
-    return data;
-  };
-
   const queries = useQueries(
     urls.map((url) => {
       return {

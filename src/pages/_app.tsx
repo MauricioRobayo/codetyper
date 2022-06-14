@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { MantineProvider } from "@mantine/core";
+import { Layout } from "../components/Layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
@@ -16,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             colorScheme: "dark",
           }}
         >
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </MantineProvider>
         <ReactQueryDevtools />
       </QueryClientProvider>
