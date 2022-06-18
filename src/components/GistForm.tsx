@@ -19,7 +19,7 @@ const GistForm = () => {
 
   const onHandleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`/${username}`);
+    router.push(`/gist/${username}`);
   };
 
   return (

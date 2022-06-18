@@ -2,11 +2,11 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
-import { TypeTest } from "../../components/TypeTest";
-import { TypingTestResult } from "../../components/TypeTest/TypeTest";
-import { useCurrentGistFile } from "../../hooks/useFileSlug";
-import { useGist } from "../../hooks/useGist";
-import { useRawFiles } from "../../hooks/useRawFiles";
+import { TypeTest } from "../../../components/TypeTest";
+import { TypingTestResult } from "../../../components/TypeTest/TypeTest";
+import { useCurrentGistFile } from "../../../hooks/useFileSlug";
+import { useGist } from "../../../hooks/useGist";
+import { useRawFiles } from "../../../hooks/useRawFiles";
 
 const GistPage: NextPage = () => {
   const router = useRouter();
@@ -53,14 +53,7 @@ const GistPage: NextPage = () => {
       return <div>No text found!</div>;
     }
 
-    return (
-      <>
-        <header></header>
-        <main>
-          <TypeTest text={text} onFinish={onFinish} />;
-        </main>
-      </>
-    );
+    return <TypeTest text={text} onFinish={onFinish} />;
   }
 
   return <div>Loading...</div>;

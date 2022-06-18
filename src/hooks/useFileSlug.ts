@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { generateFilenameSlug } from "../pages/[username]";
+import { generateFilenameSlug } from "../pages/gist/[username]";
 import { GistFile } from "./useGist";
 
 export const useCurrentGistFile = (

@@ -13,8 +13,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
-import { Gist } from "../../hooks/useGist";
-import { useGists } from "../../hooks/useGists";
+import { Gist } from "../../../hooks/useGist";
+import { useGists } from "../../../hooks/useGists";
 
 const UserPage = () => {
   const router = useRouter();
@@ -64,7 +64,7 @@ const UserPage = () => {
                       }}
                       mb="sm"
                     >
-                      <Link href={`/${username}/${id}`} passHref>
+                      <Link href={`/gist/${username}/${id}`} passHref>
                         <Anchor variant="text">{description}</Anchor>
                       </Link>
                     </Title>
