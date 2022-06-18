@@ -9,7 +9,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <AppShell
         header={
-          <Header height="auto" p="md" sx={{ backgroundColor: "transparent" }}>
+          <Header height="auto" p="md">
             <Link href="/" passHref>
               <Anchor>
                 <Title>Code Typer</Title>
@@ -18,7 +18,7 @@ export function Layout({ children }: LayoutProps) {
           </Header>
         }
         footer={
-          <Footer fixed height="auto" p="md">
+          <Footer height="auto" p="md">
             <Center>
               <div>
                 This is an{" "}
