@@ -1,3 +1,4 @@
+import { Center, Loader } from "@mantine/core";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
@@ -56,7 +57,11 @@ const GistPage: NextPage = () => {
     return <TypeTest text={text} onFinish={onFinish} />;
   }
 
-  return <div>Loading...</div>;
+  return (
+    <Center>
+      <Loader />
+    </Center>
+  );
 };
 
 export default GistPage;

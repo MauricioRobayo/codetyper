@@ -7,12 +7,14 @@ import {
   Container,
   Group,
   List,
+  Loader,
   Title,
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
+import { GIST_BASE_PATH } from "../../../../config";
 import { Gist } from "../../../hooks/useGist";
 import { useGists } from "../../../hooks/useGists";
 
@@ -24,7 +26,11 @@ const UserPage = () => {
   const gistsQuery = useGists(username, { onSuccess: setGists });
 
   if (gistsQuery.isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Center>
+        <Loader />
+      </Center>
+    );
   }
 
   if (gistsQuery.isError) {
@@ -37,7 +43,7 @@ const UserPage = () => {
     }
 
     const randomIndex = Math.floor(Math.random() * gists.length);
-    const gistPath = `/${username}/${gists[randomIndex]!.id}`;
+    const gistPath = `${GIST_BASE_PATH}/${username}/${gists[randomIndex]!.id}`;
     router.push(gistPath);
   };
 
@@ -64,7 +70,10 @@ const UserPage = () => {
                       }}
                       mb="sm"
                     >
-                      <Link href={`/gist/${username}/${id}`} passHref>
+                      <Link
+                        href={`${GIST_BASE_PATH}${username}/${id}`}
+                        passHref
+                      >
                         <Anchor variant="text">{description}</Anchor>
                       </Link>
                     </Title>

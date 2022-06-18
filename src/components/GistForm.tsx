@@ -8,6 +8,7 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { GIST_BASE_PATH } from "../../config";
 
 const GistForm = () => {
   const [username, setUsername] = useState("");
@@ -19,7 +20,7 @@ const GistForm = () => {
 
   const onHandleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`/gist/${username}`);
+    router.push(`${GIST_BASE_PATH}/${username}`);
   };
 
   return (
