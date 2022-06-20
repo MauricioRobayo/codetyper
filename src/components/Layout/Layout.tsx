@@ -1,13 +1,36 @@
-import { Anchor, AppShell, Center, Footer, Header, Title } from "@mantine/core";
+import {
+  Anchor,
+  AppShell,
+  Center,
+  Footer,
+  Header,
+  Title,
+  Text,
+  MantineTheme,
+  CSSObject,
+} from "@mantine/core";
 import Link from "next/link";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 export function Layout({ children }: LayoutProps) {
+  const sx: CSSObject = {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+  };
+  const styles = {
+    body: {
+      flex: "1",
+    },
+  };
+
   return (
     <>
       <AppShell
+        sx={sx}
+        styles={styles}
         header={
           <Header height="auto" p="md">
             <Link href="/" passHref>
