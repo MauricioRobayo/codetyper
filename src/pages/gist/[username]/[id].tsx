@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../../components/TypeTest";
-import { TypingTestResult } from "../../../components/TypeTest/TypeTest";
+import { TypingTestResult } from "../../../components/TypeTest/useTypingTest";
 import { useCurrentGistFile } from "../../../hooks/useFileSlug";
 import { useGist } from "../../../hooks/useGist";
 import { useRawFiles } from "../../../hooks/useRawFiles";
