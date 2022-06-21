@@ -1,7 +1,7 @@
 import { Center, Loader } from "@mantine/core";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../../components/TypeTest";
 import { TypingTestResult } from "../../../components/TypeTest/TypeTest";
@@ -29,19 +29,22 @@ const GistPage: NextPage = () => {
     setFileSlug,
   } = useCurrentGistFile(gistFiles, currentFileIndex);
 
-  const onFinish = (results: TypingTestResult) => {
-    alert(JSON.stringify(results, null, 2));
+  const onFinish = useCallback(
+    (results: TypingTestResult) => {
+      alert(JSON.stringify(results, null, 2));
 
-    const nextFileIndex = currentFileIndex + 1;
-    const currentGistFile = gistFiles?.[nextFileIndex];
+      const nextFileIndex = currentFileIndex + 1;
+      const currentGistFile = gistFiles?.[nextFileIndex];
 
-    if (currentGistFile && autoAdvanceFile) {
-      setCurrentFileIndex(nextFileIndex);
-      const hash = generateFilenameSlug(currentGistFile.filename);
-      setFileSlug(hash);
-      router.push({ hash });
-    }
-  };
+      if (currentGistFile && autoAdvanceFile) {
+        setCurrentFileIndex(nextFileIndex);
+        const hash = generateFilenameSlug(currentGistFile.filename);
+        setFileSlug(hash);
+        router.push({ hash });
+      }
+    },
+    [autoAdvanceFile, currentFileIndex, gistFiles, router, setFileSlug]
+  );
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;

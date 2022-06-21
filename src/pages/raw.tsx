@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { TypeTest } from "../components/TypeTest";
-import { TypingTestResult } from "../components/TypeTest/TypeTest";
+import { TypingTestResult } from "../components/TypeTest/useTypingTest";
 import { useRawFile } from "../hooks/useRawFile";
 
 export default function RawPage() {
@@ -23,9 +23,9 @@ export default function RawPage() {
     return "";
   }, [rawFileQuery.data, query.text]);
 
-  const onFinish = (result: TypingTestResult) => {
+  const onFinish = useCallback((result: TypingTestResult) => {
     alert(JSON.stringify(result, null, 2));
-  };
+  }, []);
 
   return <TypeTest text={text} onFinish={onFinish} />;
 }
