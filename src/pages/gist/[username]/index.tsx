@@ -71,7 +71,7 @@ const UserPage = () => {
                       mb="sm"
                     >
                       <Link
-                        href={`${GIST_BASE_PATH}${username}/${id}`}
+                        href={`${GIST_BASE_PATH}/${username}/${id}`}
                         passHref
                       >
                         <Anchor variant="text">{description}</Anchor>
@@ -82,7 +82,7 @@ const UserPage = () => {
                     {Object.values(files).map(({ raw_url, filename }) => (
                       <Link
                         key={raw_url}
-                        href={`/${username}/${id}#${generateFilenameSlug(
+                        href={`${GIST_BASE_PATH}/${username}/${id}#${generateFilenameSlug(
                           filename
                         )}`}
                         passHref
