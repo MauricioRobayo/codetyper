@@ -38,6 +38,7 @@ export const useTypingTest = (
 
   useEffect(() => {
     setCurrentIndex(0);
+    setCurrentLine(0);
     setHasFinished(false);
     setTextState(textToObject(text));
   }, [text]);
