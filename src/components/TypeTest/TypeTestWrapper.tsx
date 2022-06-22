@@ -1,12 +1,13 @@
-import { Container, createStyles, MantineTheme } from "@mantine/core";
-import { TypingTest, TypingTestResult } from "./TypeTest";
+import { Center, createStyles } from "@mantine/core";
+import { TypingTest } from "./TypeTest";
+import { TypingTestResult } from "./useTypingTest";
 
 type TypeTestWrapperProps = {
   text: string;
   onFinish: (results: TypingTestResult) => void;
 };
 export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
-  const useStyles = createStyles((theme: MantineTheme) => ({
+  const useStyles = createStyles((theme) => ({
     error: {
       color: theme.colors.red[6],
       fontWeight: "bold",
@@ -23,20 +24,21 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
       backgroundColor: theme.fn.rgba(theme.colors.yellow[6], 0.25),
       color: theme.colors.lime[4],
     },
-    background: {
+    textArea: {
       whiteSpace: "pre-wrap",
       fontSize: theme.fontSizes.xl,
       backgroundColor: theme.colors.dark[4],
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
+      width: theme.breakpoints.xl,
     },
   }));
 
   const { classes } = useStyles();
 
   return (
-    <Container>
+    <Center style={{ height: "100%" }}>
       <TypingTest text={text} onFinish={onFinish} classes={classes} />
-    </Container>
+    </Center>
   );
 };

@@ -9,7 +9,7 @@ type TypingTestProps = {
   text: string;
   onFinish: (results: TypingTestResult) => void;
   classes?: Record<
-    NonNullable<CharacterStatus> | "background" | "active",
+    NonNullable<CharacterStatus> | "textArea" | "active",
     string
   >;
 };
@@ -21,7 +21,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
   }
 
   return (
-    <pre className={classes ? classes.background : ""}>
+    <pre className={classes?.textArea ?? ""}>
       {textState.map(
         ({ char, status, typedKey, displayChar, isActive }, index) => {
           const displayedEndOfLine: string = isActive
