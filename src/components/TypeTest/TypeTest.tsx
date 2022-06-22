@@ -22,8 +22,8 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
     return null;
   }
 
-  const currentLine = textState.find((char) => char.isActive)!.line;
-  const lineOffset = Math.max(0, currentLine - SCROLL_LINE);
+  const currentLine = textState.find((char) => char.isActive)?.line;
+  const lineOffset = Math.max(0, (currentLine ?? 0) - SCROLL_LINE);
 
   return (
     <pre className={classes?.textArea ?? ""}>
