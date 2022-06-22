@@ -54,7 +54,7 @@ const GistPage: NextPage = () => {
     const text =
       rawFilesQuery.data[autoAdvanceFile ? currentFileIndex : gistFile.index];
     if (!text) {
-      return <div>No text found!</div>;
+      return <div>This is unexpected, no text found!</div>;
     }
 
     return <TypeTest text={text} onFinish={onFinish} />;
