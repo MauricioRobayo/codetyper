@@ -11,7 +11,7 @@ export const fetchRawFile = async (url: string) => {
   return response.data;
 };
 
-export const useRawFile = (url: string) => {
+export const useRawFileQuery = (url: string) => {
   return useQuery(["file", url], () => fetchRawFile(url), {
     enabled: !!url,
     staleTime: Infinity,

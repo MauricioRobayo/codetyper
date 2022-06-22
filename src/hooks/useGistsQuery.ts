@@ -1,12 +1,15 @@
 import axios from "axios";
 import { useQuery, useQueryClient } from "react-query";
-import { Gist } from "./useGist";
+import { Gist } from "./useGistQuery";
 
 type Options = {
   onSuccess?: (gists: Gist[]) => void;
 };
 
-export const useGists = (username: string, { onSuccess }: Options = {}) => {
+export const useGistsQuery = (
+  username: string,
+  { onSuccess }: Options = {}
+) => {
   const queryClient = useQueryClient();
 
   const fetchGists = async (username: string) => {

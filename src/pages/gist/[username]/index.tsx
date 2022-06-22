@@ -15,15 +15,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
 import { GIST_BASE_PATH } from "../../../../config";
-import { Gist } from "../../../hooks/useGist";
-import { useGists } from "../../../hooks/useGists";
+import { Gist } from "../../../hooks/useGistQuery";
+import { useGistsQuery } from "../../../hooks/useGistsQuery";
 
 const UserPage = () => {
   const router = useRouter();
   const [gists, setGists] = useState<Gist[] | null>(null);
   const username = router.query.username as string;
 
-  const gistsQuery = useGists(username, { onSuccess: setGists });
+  const gistsQuery = useGistsQuery(username, { onSuccess: setGists });
 
   if (gistsQuery.isLoading) {
     return (

@@ -1,5 +1,5 @@
 import { useQueries } from "react-query";
-import { fetchRawFile } from "./useRawFile";
+import { fetchRawFile } from "./useRawFileQuery";
 
 type QuerySuccess = {
   errors: undefined;
@@ -28,7 +28,7 @@ type QueryResult = {
   data: undefined;
 };
 
-export const useRawFiles = (
+export const useRawFilesQuery = (
   urls: string[]
 ): QuerySuccess | QueryError | QueryResult => {
   const queries = useQueries(

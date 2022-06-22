@@ -16,7 +16,7 @@ export interface Gist {
   files: { [filename: string]: GistFile };
 }
 
-export const useGist = (gistId: string) => {
+export const useGistQuery = (gistId: string) => {
   const fetchGist = async (gistId: string) => {
     const { data } = await axios.get<Gist>(
       `https://api.github.com/gists/${gistId}`

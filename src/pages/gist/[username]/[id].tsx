@@ -5,14 +5,14 @@ import { useCallback, useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../../components/TypeTest";
 import { TypingTestResult } from "../../../components/TypeTest/useTypingTest";
-import { useCurrentGistFile } from "../../../hooks/useFileSlug";
-import { useGist } from "../../../hooks/useGist";
-import { useRawFiles } from "../../../hooks/useRawFiles";
+import { useCurrentGistFile } from "../../../hooks/useCurrentGistFile";
+import { useGistQuery as useGistQuery } from "../../../hooks/useGistQuery";
+import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 
 const GistPage: NextPage = () => {
   const router = useRouter();
   const id = router.query.id as string;
-  const gistQuery = useGist(id);
+  const gistQuery = useGistQuery(id);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
   const gistFiles = useMemo(() => {
     if (gistQuery.data) {
@@ -21,7 +21,7 @@ const GistPage: NextPage = () => {
 
     return null;
   }, [gistQuery.data]);
-  const rawFilesQuery = useRawFiles(
+  const rawFilesQuery = useRawFilesQuery(
     gistFiles?.map(({ raw_url }) => raw_url) ?? []
   );
   const {

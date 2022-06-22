@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { generateFilenameSlug } from "../pages/gist/[username]";
-import { GistFile } from "./useGist";
+import { GistFile } from "./useGistQuery";
 
 export const useCurrentGistFile = (
   gistFiles: GistFile[] | null,
@@ -40,7 +40,7 @@ export const useCurrentGistFile = (
       if (currentGistFile) {
         const hash = generateFilenameSlug(currentGistFile.filename);
         setFileSlug(hash);
-        router.push({ hash });
+        router.replace({ hash });
       }
     }
   }, [asPath, autoAdvanceFile, currentFileIndex, gistFiles, isReady, router]);

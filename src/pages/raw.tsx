@@ -2,12 +2,12 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 import { TypeTest } from "../components/TypeTest";
 import { TypingTestResult } from "../components/TypeTest/useTypingTest";
-import { useRawFile } from "../hooks/useRawFile";
+import { useRawFileQuery } from "../hooks/useRawFileQuery";
 
 export default function RawPage() {
   const { query } = useRouter();
 
-  const rawFileQuery = useRawFile(
+  const rawFileQuery = useRawFileQuery(
     typeof query.url === "string" ? query.url : ""
   );
 
