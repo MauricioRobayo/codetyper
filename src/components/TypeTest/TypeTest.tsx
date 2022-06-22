@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Character from "./Character";
 import {
   CharacterStatus,
@@ -5,7 +6,7 @@ import {
   useTypingTest,
 } from "./useTypingTest";
 
-const SCROLL_LINE = 8;
+const SCROLL_LINE = 4;
 const VISIBLE_LINES = SCROLL_LINE * 2;
 type TypingTestProps = {
   text: string;
@@ -16,14 +17,18 @@ type TypingTestProps = {
   >;
 };
 export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
-  const { textState, currentIndex } = useTypingTest(text, onFinish);
+  const { textState, currentIndex, currentLine } = useTypingTest(
+    text,
+    onFinish
+  );
 
-  if (textState === null) {
+  const lineOffset = currentLine
+    ? Math.max(0, currentLine - SCROLL_LINE + 1)
+    : 0;
+
+  if (!textState) {
     return null;
   }
-
-  const currentLine = textState.find((char) => char.isActive)?.line;
-  const lineOffset = Math.max(0, (currentLine ?? 0) - SCROLL_LINE);
 
   return (
     <pre className={classes?.textArea ?? ""}>

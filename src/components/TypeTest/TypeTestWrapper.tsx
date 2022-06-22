@@ -1,12 +1,17 @@
-import { Center, createStyles } from "@mantine/core";
+import { Center, createStyles, Group, Text } from "@mantine/core";
 import { TypingTest } from "./TypeTest";
 import { TypingTestResult } from "./useTypingTest";
 
 type TypeTestWrapperProps = {
   text: string;
+  title?: string;
   onFinish: (results: TypingTestResult) => void;
 };
-export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
+export const TypeTestWrapper = ({
+  text,
+  title = "",
+  onFinish,
+}: TypeTestWrapperProps) => {
   const useStyles = createStyles((theme) => ({
     error: {
       color: theme.colors.red[6],
@@ -31,6 +36,7 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
       width: theme.breakpoints.xl,
+      margin: 0,
     },
   }));
 
@@ -38,7 +44,15 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
 
   return (
     <Center style={{ height: "100%" }}>
-      <TypingTest text={text} onFinish={onFinish} classes={classes} />
+      <Group direction="column">
+        <Group position="apart">
+          {title && <Text>{title}</Text>}
+          {text.split("\n").length > 1 && (
+            <Text>{text.split("\n").length} lines</Text>
+          )}
+        </Group>
+        <TypingTest text={text} onFinish={onFinish} classes={classes} />
+      </Group>
     </Center>
   );
 };

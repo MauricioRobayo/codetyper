@@ -31,6 +31,7 @@ export const useTypingTest = (
 ) => {
   const [textState, setTextState] = useState<TextState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentLine, setCurrentLine] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [hasFinished, setHasFinished] = useState(false);
@@ -138,6 +139,7 @@ export const useTypingTest = (
           currentCharState.isActive = false;
           currentCharState.status = status ?? currentCharState.status;
           currentCharState.typedKey = typedKey === "Enter" ? " " : typedKey;
+          setCurrentLine(newCharState.line);
         }
         setTextState([...textState]);
         setCurrentIndex(newIndex);
@@ -161,7 +163,7 @@ export const useTypingTest = (
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [currentIndex, textState, isTyping, startTime, hasFinished, onFinish]);
 
-  return { textState, currentIndex };
+  return { textState, currentIndex, currentLine };
 };
 
 function textToObject(text: string): TextState {

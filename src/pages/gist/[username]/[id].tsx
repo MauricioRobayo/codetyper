@@ -57,7 +57,9 @@ const GistPage: NextPage = () => {
       return <div>This is unexpected, no text found!</div>;
     }
 
-    return <TypeTest text={text} onFinish={onFinish} />;
+    return (
+      <TypeTest text={text} title={gistFile.filename} onFinish={onFinish} />
+    );
   }
 
   return (

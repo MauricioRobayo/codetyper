@@ -17,7 +17,7 @@ export default function RawPage() {
     }
 
     if (typeof query.text === "string") {
-      return query.text;
+      return decodeURIComponent(query.text);
     }
 
     return "";
