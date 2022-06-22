@@ -5,6 +5,8 @@ import {
   useTypingTest,
 } from "./useTypingTest";
 
+const SCROLL_LINE = 8;
+const VISIBLE_LINES = SCROLL_LINE * 2;
 type TypingTestProps = {
   text: string;
   onFinish: (results: TypingTestResult) => void;
@@ -20,10 +22,18 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
     return null;
   }
 
+  const currentLine = textState.find((char) => char.isActive)!.line;
+  const lineOffset = Math.max(0, currentLine - SCROLL_LINE);
+
   return (
     <pre className={classes?.textArea ?? ""}>
-      {textState.map(
-        ({ char, status, typedKey, displayChar, isActive }, index) => {
+      {textState
+        .filter(
+          ({ line }) =>
+            line >= lineOffset &&
+            line < SCROLL_LINE + lineOffset + VISIBLE_LINES / 2
+        )
+        .map(({ char, status, typedKey, displayChar, isActive }, index) => {
           const displayedEndOfLine: string = isActive
             ? `${displayChar}\n`
             : {
@@ -48,8 +58,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
               typedKey={char === "\n" ? displayedEndOfLine : typedKey}
             />
           );
-        }
-      )}
+        })}
     </pre>
   );
 }

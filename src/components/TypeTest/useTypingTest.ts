@@ -8,6 +8,7 @@ export type TextState = {
   typedKey: string;
   ignore: boolean;
   isActive: boolean;
+  line: number;
 }[];
 export type TypingTestResult = {
   errors: number;
@@ -167,6 +168,7 @@ function textToObject(text: string): TextState {
   const textWithEndMarker = text.endsWith("\n") ? text : `${text}\n`;
   let ignore = false;
   let setIgnore = false;
+  let line = 0;
   const textState: TextState = textWithEndMarker
     .replace(/[“”]/g, '"')
     .replace(/[ \t]+\n/g, "\n")
@@ -190,6 +192,7 @@ function textToObject(text: string): TextState {
         typedKey: "",
         ignore,
         isActive: index === 0,
+        line: char === "\n" ? line++ : line,
       };
     });
   return textState;
