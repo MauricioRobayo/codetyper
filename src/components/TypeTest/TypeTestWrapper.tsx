@@ -35,7 +35,7 @@ export const TypeTestWrapper = ({
       backgroundColor: theme.colors.dark[4],
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
-      width: theme.breakpoints.xl,
+      width: theme.breakpoints.lg,
       margin: 0,
     },
   }));
