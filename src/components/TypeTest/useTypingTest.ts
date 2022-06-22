@@ -225,7 +225,7 @@ function calculateResults(
   ).length;
   const grossWPM = Math.round(textState.length / 5 / minutes);
   const netWPM = Math.round(grossWPM - errors / minutes);
-  const accuracy = Math.round((corrects / textState.length) * 100);
+  const accuracy = corrects / textState.length;
   return {
     errors,
     corrects,
