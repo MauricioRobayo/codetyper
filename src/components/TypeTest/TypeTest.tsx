@@ -25,6 +25,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
   const lineOffset = currentLine
     ? Math.max(0, currentLine - SCROLL_LINE + 1)
     : 0;
+  const lastVisibleLine = text.split("\n").length - VISIBLE_LINES;
 
   if (!textState) {
     return null;
@@ -35,7 +36,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
       {textState
         .filter(
           ({ line }) =>
-            line >= lineOffset &&
+            line >= Math.min(lineOffset, lastVisibleLine) &&
             line < SCROLL_LINE + lineOffset + VISIBLE_LINES / 2
         )
         .map(({ char, status, typedKey, displayChar, isActive }, index) => {
