@@ -173,6 +173,7 @@ function textToObject(text: string): TextState {
   let setIgnore = false;
   let line = 0;
   const textState: TextState = textWithEndMarker
+    .trim()
     .replace(/[“”]/g, '"')
     .replace(/[ \t]+\n/g, "\n")
     .replace(/[—–]/g, "-")
