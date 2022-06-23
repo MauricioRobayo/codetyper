@@ -30,10 +30,22 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
       backgroundColor: theme.colors.dark[4],
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
+      borderRadius: theme.radius.sm,
+    },
+    lineCounter: {
+      position: "absolute",
+      bottom: "0.25rem",
+      right: "0.5rem",
+      textTransform: "lowercase",
+      fontSize: theme.fontSizes.sm,
     },
   }));
 
   const { classes } = useStyles();
 
-  return <TypingTest text={text} onFinish={onFinish} classes={classes} />;
+  return (
+    <div style={{ position: "relative" }}>
+      <TypingTest text={text} onFinish={onFinish} classes={classes} />
+    </div>
+  );
 };

@@ -12,7 +12,7 @@ type TypingTestProps = {
   text: string;
   onFinish: (results: TypingTestResult) => void;
   classes?: Record<
-    NonNullable<CharacterStatus> | "textArea" | "active",
+    NonNullable<CharacterStatus> | "textArea" | "lineCounter" | "active",
     string
   >;
 };
@@ -67,7 +67,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
           })}
       </pre>
       {totalNumberOfLines > 1 && (
-        <Text>
+        <Text className={classes?.lineCounter ?? ""}>
           Line {currentLine + 1} of {totalNumberOfLines + 1}
         </Text>
       )}
