@@ -37,6 +37,10 @@ export const useCurrentGistFile = (
     const currentGistFile = gistFiles?.[currentFileIndex];
 
     if (isReady && currentGistFile) {
+      if (gistFiles.length === 1) {
+        setAutoAdvanceFile(false);
+      }
+
       if (currentGistFile) {
         const hash = generateFilenameSlug(currentGistFile.filename);
         setFileSlug(hash);
