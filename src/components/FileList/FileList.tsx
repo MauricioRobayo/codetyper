@@ -1,4 +1,4 @@
-import { Group, Text } from "@mantine/core";
+import { Group, Text, useMantineTheme } from "@mantine/core";
 import { GistFile } from "../../hooks/useGistQuery";
 import { FileIcon } from "./FileIcon";
 
@@ -14,6 +14,7 @@ export function FileList({
   activeGistFilename,
   activeGistIndex,
 }: FilesListProps) {
+  const theme = useMantineTheme();
   if (gistFiles.length === 1) {
     return <Text>{activeGistFilename}</Text>;
   }
@@ -23,11 +24,11 @@ export function FileList({
       {gistFiles?.map(({ filename, raw_url }, index) => {
         const fileStatus = getFileStatus(index, activeGistIndex);
         const isActive = fileStatus === "active";
+        const isPending = fileStatus === "pending";
         return (
           <Text
             key={raw_url}
-            color={isActive ? "" : "dimmed"}
-            size={isActive ? "md" : "sm"}
+            color={isPending ? "dimmed" : theme.colors.lime[4]}
             weight={isActive ? "bold" : "normal"}
           >
             <Group spacing="xs">

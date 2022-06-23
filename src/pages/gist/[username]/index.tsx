@@ -7,14 +7,16 @@ import {
   Container,
   Group,
   List,
-  Loader,
+  Text,
   Title,
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
+import { PlayerPlay } from "tabler-icons-react";
 import { GIST_BASE_PATH } from "../../../../config";
+import GistForm from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 
@@ -24,14 +26,6 @@ const UserPage = () => {
   const username = router.query.username as string;
 
   const gistsQuery = useGistsQuery(username, { onSuccess: setGists });
-
-  if (gistsQuery.isLoading) {
-    return (
-      <Center>
-        <Loader />
-      </Center>
-    );
-  }
 
   if (gistsQuery.isError) {
     return <div>Something unexpected happened!</div>;
@@ -49,61 +43,69 @@ const UserPage = () => {
 
   return (
     <>
-      <Center my="lg">
-        <Button onClick={startRandomTypeTest}>
-          Start Typing a Random Gist
-        </Button>
-      </Center>
-      <Container>
-        <List spacing="lg" listStyleType="none">
-          {gists?.map(({ id, description, files }) => {
-            return (
-              <List.Item key={id}>
-                <Card>
-                  {description ? (
-                    <Title
-                      order={2}
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                      mb="sm"
-                    >
-                      <Link
-                        href={`${GIST_BASE_PATH}/${username}/${id}`}
-                        passHref
-                      >
-                        <Anchor variant="text">{description}</Anchor>
-                      </Link>
-                    </Title>
-                  ) : null}
-                  <Group spacing="xs">
-                    {Object.values(files).map(({ raw_url, filename }) => (
-                      <Link
-                        key={raw_url}
-                        href={`${GIST_BASE_PATH}/${username}/${id}#${generateFilenameSlug(
-                          filename
-                        )}`}
-                        passHref
-                      >
-                        <Anchor variant="text">
-                          <Badge
-                            size="sm"
-                            sx={{ "&:hover": { cursor: "pointer" } }}
+      {router.isReady && (
+        <GistForm username={username} loading={gistsQuery.isLoading} />
+      )}
+      {gistsQuery.isSuccess && (
+        <>
+          <Center mb="md" mt="xl">
+            <Button onClick={startRandomTypeTest} variant="default">
+              <Text mr="md">Start Typing a Random Gist</Text>
+              <PlayerPlay size={16} />
+            </Button>
+          </Center>
+          <Container>
+            <List spacing="lg" listStyleType="none">
+              {gists?.map(({ id, description, files }) => {
+                return (
+                  <List.Item key={id}>
+                    <Card>
+                      {description ? (
+                        <Title
+                          order={2}
+                          sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          mb="sm"
+                        >
+                          <Link
+                            href={`${GIST_BASE_PATH}/${username}/${id}`}
+                            passHref
                           >
-                            {filename}
-                          </Badge>
-                        </Anchor>
-                      </Link>
-                    ))}
-                  </Group>
-                </Card>
-              </List.Item>
-            );
-          })}
-        </List>
-      </Container>
+                            <Anchor variant="text">{description}</Anchor>
+                          </Link>
+                        </Title>
+                      ) : null}
+                      <Group spacing="xs">
+                        {Object.values(files).map(({ raw_url, filename }) => (
+                          <Link
+                            key={raw_url}
+                            href={`${GIST_BASE_PATH}/${username}/${id}#${generateFilenameSlug(
+                              filename
+                            )}`}
+                            passHref
+                          >
+                            <Anchor variant="text">
+                              <Badge
+                                size="sm"
+                                sx={{ "&:hover": { cursor: "pointer" } }}
+                              >
+                                {filename}
+                              </Badge>
+                            </Anchor>
+                          </Link>
+                        ))}
+                      </Group>
+                    </Card>
+                  </List.Item>
+                );
+              })}
+            </List>
+          </Container>
+        </>
+      )}
     </>
   );
 };

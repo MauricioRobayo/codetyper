@@ -66,7 +66,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
             );
           })}
       </pre>
-      {totalNumberOfLines > 1 && (
+      {totalNumberOfLines > VISIBLE_LINES && (
         <Text className={classes?.lineCounter ?? ""}>
           Line {currentLine + 1} of {totalNumberOfLines + 1}
         </Text>

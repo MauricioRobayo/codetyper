@@ -6,12 +6,12 @@ interface FileIconProps {
 }
 export function FileIcon({ status }: FileIconProps) {
   if (status === "done") {
-    return <Check size={14} />;
+    return <Check size={16} />;
   }
 
   if (status === "active") {
     return <ArrowRight size={16} strokeWidth={3} />;
   }
 
-  return <Clock size={14} />;
+  return <Clock size={16} />;
 }
