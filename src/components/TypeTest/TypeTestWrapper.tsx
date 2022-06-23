@@ -4,14 +4,9 @@ import { TypingTestResult } from "./useTypingTest";
 
 type TypeTestWrapperProps = {
   text: string;
-  title?: string;
   onFinish: (results: TypingTestResult) => void;
 };
-export const TypeTestWrapper = ({
-  text,
-  title = "",
-  onFinish,
-}: TypeTestWrapperProps) => {
+export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
   const useStyles = createStyles((theme) => ({
     error: {
       color: theme.colors.red[6],
@@ -35,24 +30,10 @@ export const TypeTestWrapper = ({
       backgroundColor: theme.colors.dark[4],
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
-      width: theme.breakpoints.lg,
-      margin: 0,
     },
   }));
 
   const { classes } = useStyles();
 
-  return (
-    <Center style={{ height: "100%" }}>
-      <Group direction="column">
-        <Group position="apart">
-          {title && <Text>{title}</Text>}
-          {text.split("\n").length > 1 && (
-            <Text>{text.split("\n").length} lines</Text>
-          )}
-        </Group>
-        <TypingTest text={text} onFinish={onFinish} classes={classes} />
-      </Group>
-    </Center>
-  );
+  return <TypingTest text={text} onFinish={onFinish} classes={classes} />;
 };

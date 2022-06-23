@@ -1,12 +1,13 @@
-import { Center, Loader } from "@mantine/core";
+import { Center, Group, Loader, Text, Title, Container } from "@mantine/core";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
+import { ArrowRight, Clock } from "tabler-icons-react";
 import { generateFilenameSlug } from ".";
 import { TypeTest } from "../../../components/TypeTest";
 import { TypingTestResult } from "../../../components/TypeTest/useTypingTest";
 import { useCurrentGistFile } from "../../../hooks/useCurrentGistFile";
-import { useGistQuery as useGistQuery } from "../../../hooks/useGistQuery";
+import { useGistQuery } from "../../../hooks/useGistQuery";
 import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 
 const GistPage: NextPage = () => {
@@ -56,9 +57,45 @@ const GistPage: NextPage = () => {
     if (!text) {
       return <div>This is unexpected, no text found!</div>;
     }
-
     return (
-      <TypeTest text={text} title={gistFile.filename} onFinish={onFinish} />
+      <Container>
+        {gistQuery.data?.description && (
+          <Title
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            mb="md"
+          >
+            {gistQuery.data?.description}
+          </Title>
+        )}
+        {autoAdvanceFile ? (
+          <Group direction="column" spacing={0}>
+            {gistFiles?.map(({ filename, raw_url }) => (
+              <Text
+                key={raw_url}
+                color={filename === gistFile.filename ? "" : "dimmed"}
+                size={filename === gistFile.filename ? "md" : "sm"}
+                weight={filename === gistFile.filename ? "bold" : "normal"}
+              >
+                <Group spacing="xs">
+                  {filename === gistFile.filename ? (
+                    <ArrowRight size={16} />
+                  ) : (
+                    <Clock size={14} />
+                  )}
+                  {filename}
+                </Group>
+              </Text>
+            ))}
+          </Group>
+        ) : (
+          <Text>{gistFile.filename}</Text>
+        )}
+        <TypeTest text={text} onFinish={onFinish} />
+      </Container>
     );
   }
 
