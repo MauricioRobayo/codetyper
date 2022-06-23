@@ -22,9 +22,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
     onFinish
   );
 
-  const lineOffset = currentLine
-    ? Math.max(0, currentLine - SCROLL_LINE + 1)
-    : 0;
+  const lineOffset = currentLine ? Math.max(0, currentLine - SCROLL_LINE) : 0;
   const lastVisibleLine = text.split("\n").length - VISIBLE_LINES;
   const totalNumberOfLines = textState?.[textState.length - 1]?.line ?? 0;
 
