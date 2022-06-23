@@ -1,5 +1,4 @@
 import { Text } from "@mantine/core";
-import { useEffect, useMemo } from "react";
 import Character from "./Character";
 import {
   CharacterStatus,
