@@ -82,7 +82,7 @@ const GistPage: NextPage = () => {
               >
                 <Group spacing="xs">
                   {filename === gistFile.filename ? (
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} strokeWidth={3} />
                   ) : (
                     <Clock size={14} />
                   )}
