@@ -61,6 +61,7 @@ export const useTypingTest = (
           "ArrowUp",
           "CapsLock",
           "Control",
+          "Dead",
           "Delete",
           "End",
           "Escape",
