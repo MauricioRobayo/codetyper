@@ -1,41 +1,49 @@
 import { Group, Text, useMantineTheme } from "@mantine/core";
-import { GistFile } from "../../hooks/useGistQuery";
+import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
 import { FileIcon } from "./FileIcon";
+import { TestResult } from "./TestResult";
 
 export type FileStatus = "pending" | "active" | "done";
 
 interface FilesListProps {
-  gistFiles: GistFile[];
-  activeGistFilename: string;
+  gistFiles: GistFileWithResult[];
   activeGistIndex: number;
 }
-export function FileList({
-  gistFiles,
-  activeGistFilename,
-  activeGistIndex,
-}: FilesListProps) {
-  const theme = useMantineTheme();
+export function FileList({ gistFiles, activeGistIndex }: FilesListProps) {
   if (gistFiles.length === 1) {
-    return <Text>{activeGistFilename}</Text>;
+    const gistFile = gistFiles[0]!;
+    return (
+      <Group spacing="xs">
+        <Text>{gistFile.filename}</Text>
+        {gistFile.typingTestResult && (
+          <TestResult result={gistFile.typingTestResult} />
+        )}
+      </Group>
+    );
   }
 
   return (
     <Group direction="column" spacing={0}>
-      {gistFiles?.map(({ filename, raw_url }, index) => {
+      {gistFiles?.map(({ filename, raw_url, typingTestResult }, index) => {
         const fileStatus = getFileStatus(index, activeGistIndex);
         const isActive = fileStatus === "active";
         const isPending = fileStatus === "pending";
         return (
-          <Text
-            key={raw_url}
-            color={isPending ? "dimmed" : theme.colors.lime[4]}
-            weight={isActive ? "bold" : "normal"}
-          >
-            <Group spacing="xs">
+          <Group key={raw_url} spacing="xs">
+            <Text
+              color={isPending ? "dimmed" : "lime"}
+              weight={isActive ? "bold" : "normal"}
+            >
               <FileIcon status={getFileStatus(index, activeGistIndex)} />
+            </Text>
+            <Text
+              color={isPending ? "dimmed" : "lime"}
+              weight={isActive ? "bold" : "normal"}
+            >
               {filename}
-            </Group>
-          </Text>
+            </Text>
+            {typingTestResult && <TestResult result={typingTestResult} />}
+          </Group>
         );
       })}
     </Group>
