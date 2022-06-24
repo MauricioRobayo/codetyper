@@ -38,13 +38,13 @@ const GistPage: NextPage = () => {
   } = useCurrentGistFile(gistFilesWithResult, currentFileIndex);
 
   const onFinish = useCallback(
-    (results: TypingTestResult) => {
+    (result: TypingTestResult) => {
       const currentFile = gistFilesWithResult[currentFileIndex];
       if (currentFile) {
-        currentFile.typingTestResult = results;
+        currentFile.typingTestResult = result;
       }
 
-      setGistFilesWithResults(gistFilesWithResult);
+      setGistFilesWithResults([...gistFilesWithResult]);
 
       const nextFileIndex = currentFileIndex + 1;
       const currentGistFile = gistFilesWithResult?.[nextFileIndex];
