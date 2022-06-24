@@ -30,7 +30,7 @@ export const TypeTestWrapper = ({
       backgroundColor: theme.colors.dark[4],
       color: theme.colors.gray[6],
       padding: theme.spacing.lg,
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.defaultRadius,
     },
     lineCounter: {
       position: "absolute",
