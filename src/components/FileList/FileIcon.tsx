@@ -1,15 +1,15 @@
 import { ArrowRight, Check, Clock } from "tabler-icons-react";
-import { FileStatus } from "./FileList";
 
 interface FileIconProps {
-  status: FileStatus;
+  isDone: boolean;
+  isActive: boolean;
 }
-export function FileIcon({ status }: FileIconProps) {
-  if (status === "done") {
+export function FileIcon({ isDone, isActive }: FileIconProps) {
+  if (isDone) {
     return <Check size={16} />;
   }
 
-  if (status === "active") {
+  if (isActive) {
     return <ArrowRight size={16} strokeWidth={3} />;
   }
 

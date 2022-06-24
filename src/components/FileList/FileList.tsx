@@ -1,9 +1,7 @@
-import { Group, Text, useMantineTheme } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
 import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
 import { FileIcon } from "./FileIcon";
 import { TestResult } from "./TestResult";
-
-export type FileStatus = "pending" | "active" | "done";
 
 interface FilesListProps {
   gistFiles: GistFileWithResult[];
@@ -25,16 +23,16 @@ export function FileList({ gistFiles, activeGistIndex }: FilesListProps) {
   return (
     <Group direction="column" spacing={0}>
       {gistFiles?.map(({ filename, raw_url, typingTestResult }, index) => {
-        const fileStatus = getFileStatus(index, activeGistIndex);
-        const isActive = fileStatus === "active";
-        const isPending = fileStatus === "pending";
+        const isDone = !!typingTestResult;
+        const isActive = index === activeGistIndex;
+        const isPending = !isDone && !isActive;
         return (
           <Group key={raw_url} spacing="xs">
             <Text
               color={isPending ? "dimmed" : "lime"}
               weight={isActive ? "bold" : "normal"}
             >
-              <FileIcon status={getFileStatus(index, activeGistIndex)} />
+              <FileIcon isDone={isDone} isActive={isActive} />
             </Text>
             <Text
               color={isPending ? "dimmed" : "lime"}
@@ -48,16 +46,4 @@ export function FileList({ gistFiles, activeGistIndex }: FilesListProps) {
       })}
     </Group>
   );
-}
-
-function getFileStatus(index: number, activeIndex: number): FileStatus {
-  if (index < activeIndex) {
-    return "done";
-  }
-
-  if (index === activeIndex) {
-    return "active";
-  }
-
-  return "pending";
 }

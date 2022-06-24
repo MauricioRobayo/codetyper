@@ -40,18 +40,19 @@ const GistPage: NextPage = () => {
   const onFinish = useCallback(
     (result: TypingTestResult) => {
       const currentFile = gistFilesWithResult[currentFileIndex];
+
       if (currentFile) {
         currentFile.typingTestResult = result;
       }
 
-      setGistFilesWithResults([...gistFilesWithResult]);
-
       const nextFileIndex = currentFileIndex + 1;
       const currentGistFile = gistFilesWithResult?.[nextFileIndex];
 
+      setGistFilesWithResults([...gistFilesWithResult]);
+
       if (currentGistFile && autoAdvanceFile) {
-        setCurrentFileIndex(nextFileIndex);
         const hash = generateFilenameSlug(currentGistFile.filename);
+        setCurrentFileIndex(nextFileIndex);
         setFileSlug(hash);
         router.push({ hash });
       }
@@ -91,7 +92,11 @@ const GistPage: NextPage = () => {
         )}
         {gistFilesWithResult && (
           <FileList
-            gistFiles={gistFilesWithResult}
+            gistFiles={
+              autoAdvanceFile
+                ? gistFilesWithResult
+                : [gistFilesWithResult[gistFile.index]!]
+            }
             activeGistIndex={gistFile.index}
           />
         )}
