@@ -10,7 +10,7 @@ export function TestResult({
   return (
     <>
       <Text weight="bold">wpm {netWPM}</Text>
-      <Text weight="bold">acc {Math.round(accuracy * 100)}</Text>
+      <Text weight="bold">acc {Math.round(accuracy * 100)}%</Text>
     </>
   );
 }
