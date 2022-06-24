@@ -169,12 +169,11 @@ export const useTypingTest = (
 };
 
 function textToObject(text: string): TextState {
-  const textWithEndMarker = text.endsWith("\n") ? text : `${text}\n`;
+  const textWithEndMarker = `${text.trim()}\n`;
   let ignore = false;
   let setIgnore = false;
   let line = 0;
   const textState: TextState = textWithEndMarker
-    .trim()
     .replace(/[“”]/g, '"')
     .replace(/[ \t]+\n/g, "\n")
     .replace(/[—–]/g, "-")
