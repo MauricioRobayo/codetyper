@@ -98,6 +98,14 @@ export const useTypingTest = (
         return;
       }
 
+      // Reached the end marker
+      // The end marker is just a placeholder to check if the last
+      // character was correctly type. No need to do anything if
+      // reached besides accepting backspace.
+      if (currentIndex === textState.length - 1) {
+        return;
+      }
+
       const currentCharState = textState[currentIndex];
 
       let newCharStatus: CharacterStatus = null;
@@ -117,17 +125,32 @@ export const useTypingTest = (
       ) {
         newCharStatus = "corrected";
       }
+      const newIndex = calculateNewIndex(textState, currentIndex);
+      setCurrentIndex(newIndex);
 
-      updateState({ textState, status: newCharStatus, typedKey: key });
+      updateState({
+        textState,
+        status: newCharStatus,
+        typedKey: key,
+        index: newIndex,
+      });
 
-      if (currentIndex === textState.length - 1 && key === "Enter") {
+      if (
+        newIndex === textState.length - 1 &&
+        ["correct", "corrected"].includes(newCharStatus)
+      ) {
         if (!startTime) {
           throw Error("This should not happen, no start time!");
         }
-        setHasFinished(true);
-        setIsTyping(false);
         const endTime = Date.now();
         const results = calculateResults(textState, startTime, endTime);
+        setHasFinished(true);
+        setIsTyping(false);
+        const lastCharacter = textState[newIndex];
+        if (lastCharacter) {
+          lastCharacter.isActive = false;
+          setTextState([...textState]);
+        }
         onFinish(results);
       }
 
@@ -140,10 +163,9 @@ export const useTypingTest = (
         textState: TextState;
         status?: NonNullable<CharacterStatus>;
         typedKey: string;
-        index?: number;
+        index: number;
       }) {
-        const newIndex = index ?? calculateNewIndex(textState, currentIndex);
-        const newCharState = textState[newIndex];
+        const newCharState = textState[index];
         const currentCharState = textState[currentIndex];
 
         if (newCharState && currentCharState) {
@@ -155,7 +177,6 @@ export const useTypingTest = (
           setCurrentLine(newCharState.line);
         }
         setTextState([...textState]);
-        setCurrentIndex(newIndex);
       }
     };
 
@@ -170,7 +191,7 @@ export const useTypingTest = (
 };
 
 function textToObject(text: string): TextState {
-  const textWithEndMarker = `${text.trim()}\n`;
+  const textWithEndMarker = `${text.trim()} `;
   let ignore = false;
   let setIgnore = false;
   let line = 0;
