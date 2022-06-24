@@ -1,7 +1,10 @@
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 import { TypeTest } from "../components/TypeTest";
-import { TypingTestResult } from "../components/TypeTest/useTypingTest";
+import {
+  TextState,
+  TypingTestResult,
+} from "../components/TypeTest/useTypingTest";
 import { useRawFileQuery } from "../hooks/useRawFileQuery";
 
 export default function RawPage() {
@@ -23,9 +26,12 @@ export default function RawPage() {
     return "";
   }, [rawFileQuery.data, query.text]);
 
-  const onFinish = useCallback((result: TypingTestResult) => {
-    alert(JSON.stringify(result, null, 2));
-  }, []);
+  const onFinish = useCallback(
+    (textState: TextState, result: TypingTestResult) => {
+      alert(JSON.stringify(result, null, 2));
+    },
+    []
+  );
 
   return <TypeTest text={text} onFinish={onFinish} />;
 }

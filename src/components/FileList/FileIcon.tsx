@@ -1,4 +1,8 @@
-import { ArrowRight, Check, Clock } from "tabler-icons-react";
+import {
+  ArrowRightIcon,
+  ClockIcon,
+  CheckCircledIcon,
+} from "@radix-ui/react-icons";
 
 interface FileIconProps {
   isDone: boolean;
@@ -6,12 +10,12 @@ interface FileIconProps {
 }
 export function FileIcon({ isDone, isActive }: FileIconProps) {
   if (isDone) {
-    return <Check size={16} />;
+    return <CheckCircledIcon />;
   }
 
   if (isActive) {
-    return <ArrowRight size={16} strokeWidth={3} />;
+    return <ArrowRightIcon />;
   }
 
-  return <Clock size={16} />;
+  return <ClockIcon />;
 }

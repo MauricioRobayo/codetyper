@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
-import { PlayerPlay } from "tabler-icons-react";
+import { PlayIcon } from "@radix-ui/react-icons";
 import { GIST_BASE_PATH } from "../../../../config";
 import GistForm from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
@@ -51,7 +51,7 @@ const UserPage = () => {
           <Center mb="md" mt="xl">
             <Button onClick={startRandomTypeTest} variant="default">
               <Text mr="md">Start Typing a Random Gist</Text>
-              <PlayerPlay size={16} />
+              <PlayIcon />
             </Button>
           </Center>
           <Container>
@@ -60,24 +60,24 @@ const UserPage = () => {
                 return (
                   <List.Item key={id}>
                     <Card>
-                      {description ? (
-                        <Title
-                          order={2}
-                          sx={{
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                          mb="sm"
-                        >
-                          <Link
-                            href={`${GIST_BASE_PATH}/${username}/${id}`}
-                            passHref
+                      <Link
+                        href={`${GIST_BASE_PATH}/${username}/${id}`}
+                        passHref
+                      >
+                        <Anchor variant="text">
+                          <Title
+                            order={2}
+                            mb="sm"
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
                           >
-                            <Anchor variant="text">{description}</Anchor>
-                          </Link>
-                        </Title>
-                      ) : null}
+                            {description || id}
+                          </Title>
+                        </Anchor>
+                      </Link>
                       <Group spacing="xs">
                         {Object.values(files).map(({ raw_url, filename }) => (
                           <Link
