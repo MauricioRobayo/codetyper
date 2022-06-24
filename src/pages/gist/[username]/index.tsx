@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import slug from "slug";
-import { PlayIcon } from "@radix-ui/react-icons";
+import { PlayIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import { GIST_BASE_PATH } from "../../../../config";
 import GistForm from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
@@ -50,7 +50,7 @@ const UserPage = () => {
         <>
           <Center mb="md" mt="xl">
             <Button onClick={startRandomTypeTest} variant="default">
-              <Text mr="md">Start Typing a Random Gist</Text>
+              <Text mr="md">Choose Random Gist</Text>
               <PlayIcon />
             </Button>
           </Center>
@@ -60,24 +60,34 @@ const UserPage = () => {
                 return (
                   <List.Item key={id}>
                     <Card>
-                      <Link
-                        href={`${GIST_BASE_PATH}/${username}/${id}`}
-                        passHref
-                      >
-                        <Anchor variant="text">
-                          <Title
-                            order={2}
-                            mb="sm"
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {description || id}
-                          </Title>
+                      <Group position="apart" align="center" mb="md">
+                        <Link
+                          href={`${GIST_BASE_PATH}/${username}/${id}`}
+                          passHref
+                        >
+                          <Anchor variant="text" sx={{ maxWidth: "95%" }}>
+                            <Title order={2}>
+                              <Text
+                                size="lg"
+                                sx={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {description || id}
+                              </Text>
+                            </Title>
+                          </Anchor>
+                        </Link>
+                        <Anchor
+                          href={`https://gist.githumb.com/${username}/${id}`}
+                          variant="text"
+                          title="Open on GitHub"
+                        >
+                          <GitHubLogoIcon />
                         </Anchor>
-                      </Link>
+                      </Group>
                       <Group spacing="xs">
                         {Object.values(files).map(({ raw_url, filename }) => (
                           <Link
