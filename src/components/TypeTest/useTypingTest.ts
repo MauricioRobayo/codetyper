@@ -120,6 +120,17 @@ export const useTypingTest = (
 
       updateState({ textState, status: newCharStatus, typedKey: key });
 
+      if (currentIndex === textState.length - 1 && key === "Enter") {
+        if (!startTime) {
+          throw Error("This should not happen, no start time!");
+        }
+        setHasFinished(true);
+        setIsTyping(false);
+        const endTime = Date.now();
+        const results = calculateResults(textState, startTime, endTime);
+        onFinish(results);
+      }
+
       function updateState({
         textState,
         status,
@@ -145,16 +156,6 @@ export const useTypingTest = (
         }
         setTextState([...textState]);
         setCurrentIndex(newIndex);
-        if (currentIndex === textState.length - 1 && typedKey === "Enter") {
-          if (!startTime) {
-            throw Error("This should not happen, no start time!");
-          }
-          setHasFinished(true);
-          setIsTyping(false);
-          const endTime = Date.now();
-          const results = calculateResults(textState, startTime, endTime);
-          onFinish(results);
-        }
       }
     };
 
