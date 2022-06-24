@@ -1,16 +1,5 @@
-import {
-  Anchor,
-  Center,
-  Container,
-  Group,
-  List,
-  Loader,
-  ThemeIcon,
-  Title,
-} from "@mantine/core";
-import { PlayIcon } from "@radix-ui/react-icons";
+import { Center, Container, Loader, Title } from "@mantine/core";
 import { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import { generateFilenameSlug } from ".";
