@@ -1,12 +1,12 @@
-import { Center, createStyles, Group, Text } from "@mantine/core";
-import { TypingTest } from "./TypeTest";
-import { TypingTestResult } from "./useTypingTest";
+import { createStyles } from "@mantine/core";
+import { TypingTest, TypingTestProps } from "./TypeTest";
 
-type TypeTestWrapperProps = {
-  text: string;
-  onFinish: (results: TypingTestResult) => void;
-};
-export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
+type TypeTestWrapperProps = Omit<TypingTestProps, "classes">;
+export const TypeTestWrapper = ({
+  text,
+  previousTextState,
+  onFinish,
+}: TypeTestWrapperProps) => {
   const useStyles = createStyles((theme) => ({
     error: {
       color: theme.colors.red[6],
@@ -45,7 +45,12 @@ export const TypeTestWrapper = ({ text, onFinish }: TypeTestWrapperProps) => {
 
   return (
     <div style={{ position: "relative" }}>
-      <TypingTest text={text} onFinish={onFinish} classes={classes} />
+      <TypingTest
+        text={text}
+        previousTextState={previousTextState}
+        onFinish={onFinish}
+        classes={classes}
+      />
     </div>
   );
 };

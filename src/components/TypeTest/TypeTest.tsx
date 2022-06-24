@@ -2,24 +2,32 @@ import { Text } from "@mantine/core";
 import Character from "./Character";
 import {
   CharacterStatus,
+  TextState,
   TypingTestResult,
   useTypingTest,
 } from "./useTypingTest";
 
 const SCROLL_LINE = 4;
 const VISIBLE_LINES = SCROLL_LINE * 2;
-type TypingTestProps = {
+export interface TypingTestProps {
   text: string;
-  onFinish: (results: TypingTestResult) => void;
+  previousTextState?: TextState;
+  onFinish: (textState: TextState, results: TypingTestResult) => void;
   classes?: Record<
     NonNullable<CharacterStatus> | "textArea" | "lineCounter" | "active",
     string
   >;
-};
-export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
+}
+export function TypingTest({
+  text,
+  previousTextState,
+  onFinish,
+  classes,
+}: TypingTestProps) {
   const { textState, currentIndex, currentLine } = useTypingTest(
     text,
-    onFinish
+    onFinish,
+    previousTextState
   );
 
   const lineOffset = currentLine ? Math.max(0, currentLine - SCROLL_LINE) : 0;
@@ -33,7 +41,7 @@ export function TypingTest({ text, onFinish, classes }: TypingTestProps) {
   return (
     <>
       <pre className={classes?.textArea ?? ""}>
-        {textState
+        {(previousTextState ?? textState)
           .filter(
             ({ line }) =>
               line >= Math.min(lineOffset, lastVisibleLine) &&

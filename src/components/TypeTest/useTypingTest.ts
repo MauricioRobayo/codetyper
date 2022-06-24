@@ -27,7 +27,8 @@ const displayChars: Record<string, string> = {
 
 export const useTypingTest = (
   text: string,
-  onFinish: (result: TypingTestResult) => void
+  onFinish: (textState: TextState, result: TypingTestResult) => void,
+  previousTextState?: TextState
 ) => {
   const [textState, setTextState] = useState<TextState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,11 +38,19 @@ export const useTypingTest = (
   const [hasFinished, setHasFinished] = useState(false);
 
   useEffect(() => {
-    setCurrentIndex(0);
-    setCurrentLine(0);
-    setHasFinished(false);
-    setTextState(textToObject(text));
-  }, [text]);
+    if (previousTextState) {
+      const lastIndex = previousTextState.length - 1;
+      setCurrentIndex(lastIndex);
+      setCurrentLine(previousTextState[lastIndex]!.line);
+      setHasFinished(true);
+      setTextState(previousTextState);
+    } else {
+      setCurrentIndex(0);
+      setCurrentLine(0);
+      setHasFinished(false);
+      setTextState(textToObject(text));
+    }
+  }, [text, previousTextState]);
 
   useEffect(() => {
     if (textState === null) {
@@ -151,7 +160,7 @@ export const useTypingTest = (
           lastCharacter.isActive = false;
           setTextState([...textState]);
         }
-        onFinish(results);
+        onFinish(textState, results);
       }
 
       function updateState({

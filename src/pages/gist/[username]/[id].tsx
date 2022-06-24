@@ -5,13 +5,17 @@ import { useCallback, useEffect, useState } from "react";
 import { generateFilenameSlug } from ".";
 import { FileList } from "../../../components/FileList";
 import { TypeTest } from "../../../components/TypeTest";
-import { TypingTestResult } from "../../../components/TypeTest/useTypingTest";
+import {
+  TextState,
+  TypingTestResult,
+} from "../../../components/TypeTest/useTypingTest";
 import { useCurrentGistFile } from "../../../hooks/useCurrentGistFile";
 import { GistFile, useGistQuery } from "../../../hooks/useGistQuery";
 import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 
 export type GistFileWithResult = GistFile & {
   typingTestResult?: TypingTestResult;
+  textState?: TextState;
 };
 
 const GistPage: NextPage = () => {
@@ -38,11 +42,12 @@ const GistPage: NextPage = () => {
   } = useCurrentGistFile(gistFilesWithResult, currentFileIndex);
 
   const onFinish = useCallback(
-    (result: TypingTestResult) => {
+    (textState: TextState, result: TypingTestResult) => {
       const currentFile = gistFilesWithResult[currentFileIndex];
 
       if (currentFile) {
         currentFile.typingTestResult = result;
+        currentFile.textState = textState;
       }
 
       const nextFileIndex = currentFileIndex + 1;
@@ -100,7 +105,11 @@ const GistPage: NextPage = () => {
             activeGistIndex={gistFile.index}
           />
         )}
-        <TypeTest text={text} onFinish={onFinish} />
+        <TypeTest
+          text={text}
+          previousTextState={gistFilesWithResult[gistFile.index]?.textState}
+          onFinish={onFinish}
+        />
       </Container>
     );
   }
