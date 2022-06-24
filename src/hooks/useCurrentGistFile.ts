@@ -3,13 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { generateFilenameSlug } from "../pages/gist/[username]";
 import { GistFile } from "./useGistQuery";
 
-export const useCurrentGistFile = (
-  gistFiles: GistFile[] | null,
-  currentFileIndex: number
-) => {
+export const useCurrentGistFile = (gistFiles: GistFile[] | null) => {
   const router = useRouter();
   const [fileSlug, setFileSlug] = useState<string | null>(null);
-  const [autoAdvanceFile, setAutoAdvanceFile] = useState<boolean | null>(null);
   const { asPath, isReady } = router;
 
   const gistFile = useMemo(() => {
@@ -25,10 +21,6 @@ export const useCurrentGistFile = (
   useEffect(() => {
     const [, fileSlugFromHash] = asPath.split("#");
 
-    if (isReady && autoAdvanceFile === null) {
-      setAutoAdvanceFile(!fileSlugFromHash);
-    }
-
     if (isReady && fileSlugFromHash) {
       setFileSlug(fileSlugFromHash);
       return;
@@ -37,17 +29,13 @@ export const useCurrentGistFile = (
     const currentGistFile = gistFiles?.[currentFileIndex];
 
     if (isReady && currentGistFile) {
-      if (gistFiles.length === 1) {
-        setAutoAdvanceFile(false);
-      }
-
       if (currentGistFile) {
         const hash = generateFilenameSlug(currentGistFile.filename);
         setFileSlug(hash);
         router.replace({ hash });
       }
     }
-  }, [asPath, autoAdvanceFile, currentFileIndex, gistFiles, isReady, router]);
+  }, [asPath, currentFileIndex, gistFiles, isReady, router]);
 
-  return { state: { gistFile, autoAdvanceFile }, setFileSlug };
+  return { gistFile, setFileSlug };
 };

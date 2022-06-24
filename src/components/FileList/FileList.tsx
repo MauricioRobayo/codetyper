@@ -5,34 +5,21 @@ import { TestResult } from "./TestResult";
 
 interface FilesListProps {
   gistFiles: GistFileWithResult[];
-  activeGistIndex: number;
+  activeGistFile?: GistFileWithResult;
 }
-export function FileList({ gistFiles, activeGistIndex }: FilesListProps) {
-  if (gistFiles.length === 1) {
-    const gistFile = gistFiles[0]!;
-    return (
-      <Group spacing="xs">
-        <Text>{gistFile.filename}</Text>
-        {gistFile.typingTestResult && (
-          <TestResult result={gistFile.typingTestResult} />
-        )}
-      </Group>
-    );
-  }
-
+export function FileList({ gistFiles, activeGistFile }: FilesListProps) {
   return (
     <Group direction="column" spacing={0}>
-      {gistFiles?.map(({ filename, raw_url, typingTestResult }, index) => {
-        const isDone = !!typingTestResult;
-        const isActive = index === activeGistIndex;
-        const isPending = !isDone && !isActive;
+      {gistFiles?.map(({ filename, raw_url, typingTest }) => {
+        const isActive = filename === activeGistFile?.filename;
+        const isPending = !typingTest.isDone && !isActive;
         return (
           <Group key={raw_url} spacing="xs">
             <Text
               color={isPending ? "dimmed" : "lime"}
               weight={isActive ? "bold" : "normal"}
             >
-              <FileIcon isDone={isDone} isActive={isActive} />
+              <FileIcon isDone={typingTest.isDone} isActive={isActive} />
             </Text>
             <Text
               color={isPending ? "dimmed" : "lime"}
@@ -40,7 +27,7 @@ export function FileList({ gistFiles, activeGistIndex }: FilesListProps) {
             >
               {filename}
             </Text>
-            {typingTestResult && <TestResult result={typingTestResult} />}
+            {typingTest.isDone && <TestResult result={typingTest.result} />}
           </Group>
         );
       })}

@@ -1,43 +1,31 @@
-import {
-  Anchor,
-  Badge,
-  Button,
-  Card,
-  Center,
-  Container,
-  Group,
-  List,
-  Text,
-  Title,
-} from "@mantine/core";
-import Link from "next/link";
+import { Button, Center, Container, List, Text } from "@mantine/core";
+import { PlayIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import slug from "slug";
-import { PlayIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import { GIST_BASE_PATH } from "../../../../config";
+import { GistCard } from "../../../components/GistCard/GistCard";
 import GistForm from "../../../components/GistForm";
-import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 
 const UserPage = () => {
   const router = useRouter();
-  const [gists, setGists] = useState<Gist[] | null>(null);
   const username = router.query.username as string;
 
-  const gistsQuery = useGistsQuery(username, { onSuccess: setGists });
+  const gistsQuery = useGistsQuery(username);
 
   if (gistsQuery.isError) {
     return <div>Something unexpected happened!</div>;
   }
 
   const startRandomTypeTest = () => {
-    if (!gists) {
+    if (!gistsQuery.data) {
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * gists.length);
-    const gistPath = `${GIST_BASE_PATH}/${username}/${gists[randomIndex]!.id}`;
+    const randomIndex = Math.floor(Math.random() * gistsQuery.data.length);
+    const gistPath = `${GIST_BASE_PATH}/${username}/${
+      gistsQuery.data[randomIndex]!.id
+    }`;
     router.push(gistPath);
   };
 
@@ -56,59 +44,19 @@ const UserPage = () => {
           </Center>
           <Container>
             <List spacing="lg" listStyleType="none">
-              {gists?.map(({ id, description, files }) => {
+              {gistsQuery?.data.map(({ id, description, files }) => {
                 return (
                   <List.Item key={id}>
-                    <Card>
-                      <Group position="apart" align="center" mb="md">
-                        <Link
-                          href={`${GIST_BASE_PATH}/${username}/${id}`}
-                          passHref
-                        >
-                          <Anchor variant="text" sx={{ maxWidth: "95%" }}>
-                            <Title order={2}>
-                              <Text
-                                size="lg"
-                                sx={{
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {description || id}
-                              </Text>
-                            </Title>
-                          </Anchor>
-                        </Link>
-                        <Anchor
-                          href={`https://gist.githumb.com/${username}/${id}`}
-                          variant="text"
-                          title="Open on GitHub"
-                        >
-                          <GitHubLogoIcon />
-                        </Anchor>
-                      </Group>
-                      <Group spacing="xs">
-                        {Object.values(files).map(({ raw_url, filename }) => (
-                          <Link
-                            key={raw_url}
-                            href={`${GIST_BASE_PATH}/${username}/${id}#${generateFilenameSlug(
-                              filename
-                            )}`}
-                            passHref
-                          >
-                            <Anchor variant="text">
-                              <Badge
-                                size="sm"
-                                sx={{ "&:hover": { cursor: "pointer" } }}
-                              >
-                                {filename}
-                              </Badge>
-                            </Anchor>
-                          </Link>
-                        ))}
-                      </Group>
-                    </Card>
+                    <GistCard
+                      description={description}
+                      files={files}
+                      breadcrumbs={[
+                        {
+                          title: id,
+                        },
+                      ]}
+                      path={`${username}/${id}`}
+                    />
                   </List.Item>
                 );
               })}

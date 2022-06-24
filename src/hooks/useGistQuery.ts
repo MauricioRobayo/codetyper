@@ -16,7 +16,10 @@ export interface Gist {
   files: { [filename: string]: GistFile };
 }
 
-export const useGistQuery = (gistId: string) => {
+interface GistQueryOptions {
+  onSuccess: (gist: Gist) => void;
+}
+export const useGistQuery = (gistId: string, options?: GistQueryOptions) => {
   const fetchGist = async (gistId: string) => {
     const { data } = await axios.get<Gist>(
       `https://api.github.com/gists/${gistId}`
@@ -25,5 +28,6 @@ export const useGistQuery = (gistId: string) => {
   };
   return useQuery(["gist", gistId], () => fetchGist(gistId), {
     enabled: typeof gistId === "string" && gistId !== "",
+    onSuccess: options?.onSuccess,
   });
 };
