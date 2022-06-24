@@ -5,6 +5,7 @@ import slug from "slug";
 import { GIST_BASE_PATH } from "../../../../config";
 import { GistCard } from "../../../components/GistCard/GistCard";
 import GistForm from "../../../components/GistForm";
+import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 
 const UserPage = () => {
@@ -18,15 +19,13 @@ const UserPage = () => {
   }
 
   const startRandomTypeTest = () => {
-    if (!gistsQuery.data) {
+    const gists = gistsQuery.data;
+
+    if (!gists) {
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * gistsQuery.data.length);
-    const gistPath = `${GIST_BASE_PATH}/${username}/${
-      gistsQuery.data[randomIndex]!.id
-    }`;
-    router.push(gistPath);
+    router.push(generateRandomGistPath(gists, username));
   };
 
   return (
@@ -67,6 +66,15 @@ const UserPage = () => {
     </>
   );
 };
+
+function generateRandomGistPath(gists: Gist[], username: string) {
+  const randomIndex = Math.floor(Math.random() * gists.length);
+  const randomGist = gists[randomIndex]!;
+  const gistFile = Object.values(randomGist.files)[0]!;
+  const gistFileSlug = generateFilenameSlug(gistFile.filename);
+
+  return `${GIST_BASE_PATH}/${username}/${randomGist.id}#${gistFileSlug}`;
+}
 
 export function generateFilenameSlug(filename: string): string {
   return `file-${slug(filename, { charmap: { ".": "-", _: "_" } })}`;
