@@ -16,7 +16,7 @@ import {
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { generateFilenameSlug } from ".";
 import { GIST_BASE_PATH } from "../../../../config";
@@ -67,14 +67,12 @@ const GistPage: NextPage = () => {
   const rawFilesQuery = useRawFilesQuery(
     gistFilesWithResult?.map(({ raw_url }) => raw_url) ?? []
   );
-
   const currentGistFile = useMemo(() => {
     const currentGistSlug = router.asPath.split("#")[1];
     return gistFilesWithResult.find(
       (gistFile) => generateFilenameSlug(gistFile.filename) === currentGistSlug
     );
   }, [router.asPath, gistFilesWithResult]);
-
   const onFinish = useCallback(
     (textState: TextState, result: TypingTestResult) => {
       if (currentGistFile) {
@@ -96,12 +94,22 @@ const GistPage: NextPage = () => {
     setIsTyping(true);
   }, []);
 
+  useEffect(() => {
+    const hash = router.asPath.split("#")[1];
+    if (!hash && gistQuery.data) {
+      const hash = generateFilenameSlug(
+        Object.values(gistQuery.data.files)[0]!.filename
+      );
+      router.replace({ hash });
+    }
+  }, [gistQuery.data, router]);
+
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
   }
 
   if (gistQuery.isSuccess && !currentGistFile) {
-    return <div>TODO: List of gists</div>;
+    return <div>This is unexpected!</div>;
   }
 
   if (rawFilesQuery.isSuccess && currentGistFile) {

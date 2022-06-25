@@ -1,13 +1,18 @@
-import { Button, Center, Group, TextInput } from "@mantine/core";
+import { Button, Group, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { GIST_BASE_PATH } from "../../config";
 
 interface GistFormProps {
   username?: string;
   loading?: boolean;
+  showHeader?: boolean;
 }
-const GistForm = ({ username = "", loading = false }: GistFormProps) => {
+const GistForm = ({
+  username = "",
+  loading = false,
+  showHeader = false,
+}: GistFormProps) => {
   const [value, setValue] = useState(username);
   const router = useRouter();
 
@@ -21,22 +26,24 @@ const GistForm = ({ username = "", loading = false }: GistFormProps) => {
   };
 
   return (
-    <Center>
-      <form onSubmit={onHandleSubmit} action="#">
-        <Group sx={{ alignItems: "flex-end" }}>
-          <TextInput
-            label="GitHub Username"
-            description="Please enter your GitHub username to get your gists."
-            placeholder="GitHub username"
-            value={value}
-            onChange={onChangeUsername}
-          />
-          <Button type="submit" loading={loading}>
-            Get Gists
-          </Button>
-        </Group>
-      </form>
-    </Center>
+    <form onSubmit={onHandleSubmit} action="#">
+      <Group sx={{ alignItems: "flex-end" }}>
+        <TextInput
+          label={showHeader ? "GitHub Username" : ""}
+          description={
+            showHeader
+              ? "Please enter your GitHub username to get your gists."
+              : ""
+          }
+          placeholder="GitHub username"
+          value={value}
+          onChange={onChangeUsername}
+        />
+        <Button type="submit" loading={loading}>
+          Get Gists
+        </Button>
+      </Group>
+    </form>
   );
 };
 

@@ -1,4 +1,12 @@
-import { Button, Center, Container, List, Text } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Divider,
+  Group,
+  List,
+  Text,
+} from "@mantine/core";
 import { PlayIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 import slug from "slug";
@@ -31,37 +39,42 @@ const UserPage = () => {
   return (
     <>
       {router.isReady && (
-        <GistForm username={username} loading={gistsQuery.isLoading} />
-      )}
-      {gistsQuery.isSuccess && (
-        <>
-          <Center mb="md" mt="xl">
+        <Container>
+          <Group align="flex-end" position="apart">
+            <GistForm
+              username={username}
+              loading={gistsQuery.isLoading}
+              showHeader
+            />
             <Button onClick={startRandomTypeTest} variant="default">
-              <Text mr="md">Choose Random Gist</Text>
+              <Text mr="md">Random Gist</Text>
               <PlayIcon />
             </Button>
-          </Center>
-          <Container>
-            <List spacing="lg" listStyleType="none">
-              {gistsQuery?.data.map(({ id, description, files }) => {
-                return (
-                  <List.Item key={id}>
-                    <GistCard
-                      description={description}
-                      files={files}
-                      breadcrumbs={[
-                        {
-                          title: id,
-                        },
-                      ]}
-                      path={`${username}/${id}`}
-                    />
-                  </List.Item>
-                );
-              })}
-            </List>
-          </Container>
-        </>
+          </Group>
+          <Divider my="xl" />
+        </Container>
+      )}
+      {gistsQuery.isSuccess && (
+        <Container>
+          <List spacing="lg" listStyleType="none">
+            {gistsQuery?.data.map(({ id, description, files }) => {
+              return (
+                <List.Item key={id}>
+                  <GistCard
+                    description={description}
+                    files={files}
+                    breadcrumbs={[
+                      {
+                        title: id,
+                      },
+                    ]}
+                    path={`${username}/${id}`}
+                  />
+                </List.Item>
+              );
+            })}
+          </List>
+        </Container>
       )}
     </>
   );
