@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { emojiRegex } from "./emojiRegExp";
 
 export type CharacterStatus = "correct" | "error" | "corrected" | null;
 export type TextState = {
@@ -216,32 +217,32 @@ function textToObject(text: string): TextState {
   let ignore = false;
   let setIgnore = false;
   let line = 0;
-  const textState: TextState = textWithEndMarker
-    .replace(/[“”]/g, '"')
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/[—–]/g, "-")
-    .replace(/’/g, "'")
-    .split("")
-    .map((char, index) => {
-      if (!setIgnore && char === "\n") {
-        ignore = false;
-        setIgnore = true;
-      } else if (setIgnore && /\s/.test(char)) {
-        ignore = true;
-      } else {
-        ignore = false;
-        setIgnore = false;
-      }
-      return {
-        char,
-        displayChar: displayChars[char] ?? char,
-        status: null,
-        typedKey: "",
-        ignore,
-        isActive: index === 0,
-        line: char === "\n" ? line++ : line,
-      };
-    });
+  const textState: TextState = [
+    ...textWithEndMarker
+      .replace(/[“”]/g, '"')
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/[—–]/g, "-")
+      .replace(/’/g, "'"),
+  ].map((char, index) => {
+    if (!setIgnore && char === "\n") {
+      ignore = false;
+      setIgnore = true;
+    } else if (setIgnore && /\s/.test(char)) {
+      ignore = true;
+    } else {
+      ignore = false;
+      setIgnore = false;
+    }
+    return {
+      char,
+      displayChar: displayChars[char] ?? char,
+      status: null,
+      typedKey: "",
+      ignore: ignore || /\p{Extended_Pictographic}/u.test(char),
+      isActive: index === 0,
+      line: char === "\n" ? line++ : line,
+    };
+  });
   return textState;
 }
 

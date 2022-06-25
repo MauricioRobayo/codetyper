@@ -6,8 +6,13 @@ import {
   Group,
   Loader,
   Title,
+  Text,
 } from "@mantine/core";
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  GitHubLogoIcon,
+} from "@radix-ui/react-icons";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -108,17 +113,29 @@ const GistPage: NextPage = () => {
     }
     return (
       <Container>
-        {gistQuery.data?.description && (
-          <Title
-            sx={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-            mb="md"
-          >
-            {gistQuery.data?.description}
-          </Title>
+        {gistQuery.data && (
+          <Group mb="md" position="apart">
+            <Title
+              sx={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "95%",
+              }}
+            >
+              <Text>{gistQuery.data.description || gistQuery.data.id}</Text>
+            </Title>
+            <Anchor
+              href={`https://gist.github.com${router.asPath.replace(
+                GIST_BASE_PATH,
+                ""
+              )}`}
+              variant="text"
+              title="View on GitHub"
+            >
+              <GitHubLogoIcon />
+            </Anchor>
+          </Group>
         )}
         {gistFilesWithResult && (
           <FileList
@@ -140,7 +157,7 @@ const GistPage: NextPage = () => {
         <Group position="apart">
           <Link href={`${GIST_BASE_PATH}/${username}`} passHref>
             <Anchor>
-              <ArrowLeftIcon /> {username}'s gists
+              <ArrowLeftIcon /> {username}&apos;s gists
             </Anchor>
           </Link>
           {gistFilesWithResult.length > 1 && !isTyping && (
