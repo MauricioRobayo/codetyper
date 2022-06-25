@@ -50,7 +50,7 @@ const GistPage: NextPage = () => {
     GistFileWithResult[]
   >([]);
   const [isTyping, setIsTyping] = useState(false);
-  const gistQuery = useGistQuery(id, {
+  const gistQuery = useGistQuery(id ?? "", {
     onSuccess: (gist) => {
       setGistFilesWithResults(
         Object.values(gist.files).map(

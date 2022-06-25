@@ -27,7 +27,7 @@ export const useGistQuery = (gistId: string, options?: GistQueryOptions) => {
     return data;
   };
   return useQuery(["gist", gistId], () => fetchGist(gistId), {
-    enabled: typeof gistId === "string" && gistId !== "",
+    enabled: gistId !== "",
     onSuccess: options?.onSuccess,
   });
 };
