@@ -1,18 +1,10 @@
-import {
-  Button,
-  Center,
-  Container,
-  Divider,
-  Group,
-  List,
-  Text,
-} from "@mantine/core";
+import { Button, Container, Divider, Group, List, Text } from "@mantine/core";
 import { PlayIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 import slug from "slug";
 import { GIST_BASE_PATH } from "../../../../config";
 import { GistCard } from "../../../components/GistCard/GistCard";
-import GistForm from "../../../components/GistForm";
+import { GistForm } from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 

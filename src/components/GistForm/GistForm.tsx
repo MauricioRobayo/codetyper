@@ -1,18 +1,18 @@
 import { Button, Group, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { GIST_BASE_PATH } from "../../config";
+import { GIST_BASE_PATH } from "../../../config";
 
 interface GistFormProps {
   username?: string;
   loading?: boolean;
   showHeader?: boolean;
 }
-const GistForm = ({
+export function GistForm({
   username = "",
   loading = false,
   showHeader = false,
-}: GistFormProps) => {
+}: GistFormProps) {
   const [value, setValue] = useState(username);
   const router = useRouter();
 
@@ -45,6 +45,4 @@ const GistForm = ({
       </Group>
     </form>
   );
-};
-
-export default GistForm;
+}

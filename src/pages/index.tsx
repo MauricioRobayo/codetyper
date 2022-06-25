@@ -2,7 +2,7 @@ import { Code, Container, List, Text, Anchor, Kbd } from "@mantine/core";
 import type { NextPage } from "next";
 import Link from "next/link";
 import Head from "next/head";
-import GistForm from "../components/GistForm";
+import { GistForm } from "../components/GistForm";
 
 const Home: NextPage = () => {
   return (
