@@ -13,6 +13,7 @@ export interface TypingTestProps {
   text: string;
   previousTextState?: TextState;
   onFinish: (textState: TextState, results: TypingTestResult) => void;
+  onStart: () => void;
   classes?: Record<
     NonNullable<CharacterStatus> | "textArea" | "lineCounter" | "active",
     string
@@ -22,11 +23,13 @@ export function TypingTest({
   text,
   previousTextState,
   onFinish,
+  onStart,
   classes,
 }: TypingTestProps) {
   const { textState, currentIndex, currentLine } = useTypingTest(
     text,
     onFinish,
+    onStart,
     previousTextState
   );
 

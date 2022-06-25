@@ -46,7 +46,8 @@ export const useRawFilesQuery = (
         queryFn: async () => {
           const text = await fetchRawFile(url);
           return {
-            url: text,
+            url,
+            text,
           };
         },
         enabled: urls.length > 0,

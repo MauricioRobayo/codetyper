@@ -6,6 +6,7 @@ export const TypeTestWrapper = ({
   text,
   previousTextState,
   onFinish,
+  onStart,
 }: TypeTestWrapperProps) => {
   const useStyles = createStyles((theme) => ({
     error: {
@@ -49,6 +50,7 @@ export const TypeTestWrapper = ({
         text={text}
         previousTextState={previousTextState}
         onFinish={onFinish}
+        onStart={onStart}
         classes={classes}
       />
     </div>

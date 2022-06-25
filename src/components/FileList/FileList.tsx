@@ -1,6 +1,8 @@
-import { Group, Text } from "@mantine/core";
+import { Anchor, Group, List, Text } from "@mantine/core";
+import Link from "next/link";
+import { generateFilenameSlug } from "../../pages/gist/[username]";
 import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
-import { FileIcon } from "./FileIcon";
+import { FileIcon } from "./FileIcons";
 import { TestResult } from "./TestResult";
 
 interface FilesListProps {
@@ -9,28 +11,27 @@ interface FilesListProps {
 }
 export function FileList({ gistFiles, activeGistFile }: FilesListProps) {
   return (
-    <Group direction="column" spacing={0}>
+    <List spacing="xs" size="sm">
       {gistFiles?.map(({ filename, raw_url, typingTest }) => {
         const isActive = filename === activeGistFile?.filename;
-        const isPending = !typingTest.isDone && !isActive;
         return (
-          <Group key={raw_url} spacing="xs">
-            <Text
-              color={isPending ? "dimmed" : "lime"}
-              weight={isActive ? "bold" : "normal"}
-            >
-              <FileIcon isDone={typingTest.isDone} isActive={isActive} />
-            </Text>
-            <Text
-              color={isPending ? "dimmed" : "lime"}
-              weight={isActive ? "bold" : "normal"}
-            >
-              {filename}
-            </Text>
-            {typingTest.isDone && <TestResult result={typingTest.result} />}
-          </Group>
+          <List.Item
+            key={raw_url}
+            icon={<FileIcon isActive={isActive} isDone={typingTest.isDone} />}
+          >
+            <Group>
+              {isActive ? (
+                <Text>{filename}</Text>
+              ) : (
+                <Link href={{ hash: generateFilenameSlug(filename) }} passHref>
+                  <Anchor>{filename}</Anchor>
+                </Link>
+              )}
+              {typingTest.isDone && <TestResult result={typingTest.result} />}
+            </Group>
+          </List.Item>
         );
       })}
-    </Group>
+    </List>
   );
 }

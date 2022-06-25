@@ -1,10 +1,11 @@
-import { Center, Container, Loader, Title } from "@mantine/core";
+import { Button, Center, Container, Group, Loader, Title } from "@mantine/core";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { generateFilenameSlug } from ".";
 import { FileList } from "../../../components/FileList";
-import { GistCard } from "../../../components/GistCard/GistCard";
 import { TypeTest } from "../../../components/TypeTest";
 import {
   TextState,
@@ -26,11 +27,13 @@ export type GistFileWithResult = GistFile & {
 };
 
 const GistPage: NextPage = () => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const id = router.query.id as string;
   const [gistFilesWithResult, setGistFilesWithResults] = useState<
     GistFileWithResult[]
   >([]);
+  const [isTyping, setIsTyping] = useState(false);
   const gistQuery = useGistQuery(id, {
     onSuccess: (gist) => {
       setGistFilesWithResults(
@@ -48,6 +51,16 @@ const GistPage: NextPage = () => {
   const rawFilesQuery = useRawFilesQuery(
     gistFilesWithResult?.map(({ raw_url }) => raw_url) ?? []
   );
+  const goToNextFile = () => {
+    const currentIndex = gistFilesWithResult.findIndex(
+      (gistFile) => gistFile.filename === currentGistFile?.filename
+    );
+    const nextIndex = (currentIndex + 1) % gistFilesWithResult.length;
+    const nextFile = gistFilesWithResult[nextIndex];
+    if (nextFile) {
+      router.push({ hash: generateFilenameSlug(nextFile.filename) });
+    }
+  };
 
   const currentGistFile = useMemo(() => {
     const currentGistSlug = router.asPath.split("#")[1];
@@ -66,25 +79,23 @@ const GistPage: NextPage = () => {
         };
         setGistFilesWithResults([...gistFilesWithResult]);
       }
+      flushSync(() => {
+        setIsTyping(false);
+      });
+      buttonRef.current?.focus();
     },
     [currentGistFile, gistFilesWithResult]
   );
+  const onStart = useCallback(() => {
+    setIsTyping(true);
+  }, []);
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
   }
 
   if (gistQuery.isSuccess && !currentGistFile) {
-    return (
-      <GistCard
-        id={id}
-        description={gistQuery.data.description}
-        username={
-          typeof router.query.username === "string" ? router.query.username : ""
-        }
-        files={gistQuery.data.files}
-      />
-    );
+    return <div>TODO: List of gists</div>;
   }
 
   if (rawFilesQuery.isSuccess && currentGistFile) {
@@ -122,7 +133,20 @@ const GistPage: NextPage = () => {
               : undefined
           }
           onFinish={onFinish}
+          onStart={onStart}
         />
+
+        {gistFilesWithResult.length > 1 && !isTyping && (
+          <Group position="right">
+            <Button
+              ref={buttonRef}
+              rightIcon={<ArrowRightIcon />}
+              onClick={goToNextFile}
+            >
+              Next File
+            </Button>
+          </Group>
+        )}
       </Container>
     );
   }
