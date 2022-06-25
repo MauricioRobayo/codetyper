@@ -1,11 +1,20 @@
-import { Button, Center, Container, Group, Loader, Title } from "@mantine/core";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
+import {
+  Anchor,
+  Button,
+  Center,
+  Container,
+  Group,
+  Loader,
+  Title,
+} from "@mantine/core";
+import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { generateFilenameSlug } from ".";
+import { GIST_BASE_PATH } from "../../../../config";
 import { FileList } from "../../../components/FileList";
 import { TypeTest } from "../../../components/TypeTest";
 import {
@@ -30,7 +39,8 @@ export type GistFileWithResult = GistFile & {
 const GistPage: NextPage = () => {
   const buttonRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
-  const id = router.query.id as string;
+  const id = router.query.id as string | undefined;
+  const username = router.query.username as string | undefined;
   const [gistFilesWithResult, setGistFilesWithResults] = useState<
     GistFileWithResult[]
   >([]);
@@ -127,8 +137,13 @@ const GistPage: NextPage = () => {
           onStart={onStart}
         />
 
-        {gistFilesWithResult.length > 1 && !isTyping && (
-          <Group position="right">
+        <Group position="apart">
+          <Link href={`${GIST_BASE_PATH}/${username}`} passHref>
+            <Anchor>
+              <ArrowLeftIcon /> {username}'s gists
+            </Anchor>
+          </Link>
+          {gistFilesWithResult.length > 1 && !isTyping && (
             <Link
               href={`#${generateNextFileLink(
                 gistFilesWithResult,
@@ -144,8 +159,8 @@ const GistPage: NextPage = () => {
                 Next File
               </Button>
             </Link>
-          </Group>
-        )}
+          )}
+        </Group>
       </Container>
     );
   }
