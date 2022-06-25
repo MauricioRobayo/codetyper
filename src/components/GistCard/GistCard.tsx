@@ -3,12 +3,13 @@ import {
   Badge,
   Box,
   Breadcrumbs,
+  Button,
   Card,
   Group,
   Text,
   Title,
 } from "@mantine/core";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { GitHubLogoIcon, PlayIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { GIST_BASE_PATH } from "../../../config";
 import { Gist } from "../../hooks/useGistQuery";
@@ -83,11 +84,15 @@ export function GistCard({
             href={`${GIST_BASE_PATH}/${path}#${generateFilenameSlug(filename)}`}
             passHref
           >
-            <Anchor variant="text">
-              <Badge size="sm" sx={{ "&:hover": { cursor: "pointer" } }}>
-                {filename}
-              </Badge>
-            </Anchor>
+            <Button
+              component="a"
+              radius="xl"
+              variant="light"
+              rightIcon={<PlayIcon />}
+              compact
+            >
+              {filename}
+            </Button>
           </Link>
         ))}
       </Group>
