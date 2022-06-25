@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Gist Typer</title>
+        <title>Code Typer</title>
         <meta name="description" content="Code Typer" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
