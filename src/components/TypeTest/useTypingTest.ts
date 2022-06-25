@@ -28,7 +28,7 @@ const displayChars: Record<string, string> = {
 export const useTypingTest = (
   text: string,
   onFinish: (textState: TextState, result: TypingTestResult) => void,
-  onStart: () => void,
+  onStart?: () => void,
   previousTextState?: TextState
 ) => {
   const [textState, setTextState] = useState<TextState | null>(null);
@@ -91,7 +91,9 @@ export const useTypingTest = (
       if (!isTyping) {
         setIsTyping(true);
         setStartTime(Date.now());
-        onStart();
+        if (typeof onStart === "function") {
+          onStart();
+        }
       }
 
       if (key === "Backspace") {
@@ -196,7 +198,15 @@ export const useTypingTest = (
     }
 
     return () => window.removeEventListener("keydown", handleKeydown);
-  }, [currentIndex, textState, isTyping, startTime, hasFinished, onFinish]);
+  }, [
+    currentIndex,
+    textState,
+    isTyping,
+    startTime,
+    hasFinished,
+    onFinish,
+    onStart,
+  ]);
 
   return { textState, currentIndex, currentLine };
 };

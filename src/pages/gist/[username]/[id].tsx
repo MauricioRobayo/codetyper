@@ -1,6 +1,7 @@
 import { Button, Center, Container, Group, Loader, Title } from "@mantine/core";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
@@ -27,7 +28,7 @@ export type GistFileWithResult = GistFile & {
 };
 
 const GistPage: NextPage = () => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
   const id = router.query.id as string;
   const [gistFilesWithResult, setGistFilesWithResults] = useState<
@@ -51,16 +52,6 @@ const GistPage: NextPage = () => {
   const rawFilesQuery = useRawFilesQuery(
     gistFilesWithResult?.map(({ raw_url }) => raw_url) ?? []
   );
-  const goToNextFile = () => {
-    const currentIndex = gistFilesWithResult.findIndex(
-      (gistFile) => gistFile.filename === currentGistFile?.filename
-    );
-    const nextIndex = (currentIndex + 1) % gistFilesWithResult.length;
-    const nextFile = gistFilesWithResult[nextIndex];
-    if (nextFile) {
-      router.push({ hash: generateFilenameSlug(nextFile.filename) });
-    }
-  };
 
   const currentGistFile = useMemo(() => {
     const currentGistSlug = router.asPath.split("#")[1];
@@ -138,13 +129,21 @@ const GistPage: NextPage = () => {
 
         {gistFilesWithResult.length > 1 && !isTyping && (
           <Group position="right">
-            <Button
-              ref={buttonRef}
-              rightIcon={<ArrowRightIcon />}
-              onClick={goToNextFile}
+            <Link
+              href={`#${generateNextFileLink(
+                gistFilesWithResult,
+                currentGistFile
+              )}`}
+              passHref
             >
-              Next File
-            </Button>
+              <Button
+                component="a"
+                ref={buttonRef}
+                rightIcon={<ArrowRightIcon />}
+              >
+                Next File
+              </Button>
+            </Link>
           </Group>
         )}
       </Container>
@@ -159,3 +158,15 @@ const GistPage: NextPage = () => {
 };
 
 export default GistPage;
+
+function generateNextFileLink(
+  gistFilesWithResult: GistFileWithResult[],
+  currentGistFile: GistFile
+) {
+  const currentIndex = gistFilesWithResult.findIndex(
+    (gistFile) => gistFile.filename === currentGistFile?.filename
+  );
+  const nextIndex = (currentIndex + 1) % gistFilesWithResult.length;
+  const nextFile = gistFilesWithResult[nextIndex]!;
+  return generateFilenameSlug(nextFile.filename);
+}

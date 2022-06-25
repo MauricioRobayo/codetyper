@@ -13,7 +13,7 @@ export interface TypingTestProps {
   text: string;
   previousTextState?: TextState;
   onFinish: (textState: TextState, results: TypingTestResult) => void;
-  onStart: () => void;
+  onStart?: () => void;
   classes?: Record<
     NonNullable<CharacterStatus> | "textArea" | "lineCounter" | "active",
     string
