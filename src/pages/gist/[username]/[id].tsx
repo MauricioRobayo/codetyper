@@ -13,6 +13,7 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   GitHubLogoIcon,
+  ResetIcon,
   ShuffleIcon,
 } from "@radix-ui/react-icons";
 import { NextPage } from "next";
@@ -52,13 +53,13 @@ const GistPage: NextPage = () => {
   const [randomGist, setRandomGist] = useState<Gist | null>(null);
   const nextFileButtonRef = useRef<HTMLAnchorElement>(null);
   const nextGistButtonRef = useRef<HTMLAnchorElement>(null);
-  const router = useRouter();
-  const id = router.query.id;
-  const username = router.query.username;
   const [gistFilesWithResult, setGistFilesWithResults] = useState<
     GistFileWithResult[]
   >([]);
+  const router = useRouter();
+  const id = router.query.id;
   const [isTyping, setIsTyping] = useState(false);
+  const username = router.query.username;
   const setNextRandomGist = (gists: Gist[]) => {
     setRandomGist(getRandomGist(gists));
   };
@@ -125,6 +126,20 @@ const GistPage: NextPage = () => {
 
   useGetNextRandomGist(gistsQuery.data, username, setNextRandomGist);
 
+  const restart = () => {
+    setGistFilesWithResults((gistFiles) =>
+      gistFiles.map((gistFile) => {
+        if (
+          generateFilenameSlug(gistFile.filename) ===
+          generateFilenameSlug(currentGistFile?.filename ?? "")
+        ) {
+          gistFile.typingTest = { isDone: false };
+        }
+        return gistFile;
+      })
+    );
+  };
+
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
   }
@@ -189,31 +204,44 @@ const GistPage: NextPage = () => {
               <ArrowLeftIcon /> {username}&apos;s gists
             </Anchor>
           </Link>
-          {allGistFilesCompleted && randomGist && typeof username === "string" && (
-            <Button
-              component={NextLink}
-              href={generateGistPath(randomGist, username)}
-              ref={nextGistButtonRef}
-              rightIcon={<ShuffleIcon />}
-            >
-              Next Random Gist
-            </Button>
-          )}
-          {gistFilesWithResult.length > 1 &&
-            !isTyping &&
-            !allGistFilesCompleted && (
+          <Group>
+            {allGistFilesCompleted &&
+              randomGist &&
+              typeof username === "string" && (
+                <Button
+                  component={NextLink}
+                  href={generateGistPath(randomGist, username)}
+                  ref={nextGistButtonRef}
+                  rightIcon={<ShuffleIcon />}
+                >
+                  Next Random Gist
+                </Button>
+              )}
+            {gistFilesWithResult.length > 1 &&
+              !isTyping &&
+              !allGistFilesCompleted && (
+                <Button
+                  href={`#${generateNextFileLink(
+                    gistFilesWithResult,
+                    currentGistFile
+                  )}`}
+                  component={NextLink}
+                  ref={nextFileButtonRef}
+                  rightIcon={<ArrowRightIcon />}
+                >
+                  Next File
+                </Button>
+              )}
+            {currentGistFile.typingTest.isDone && (
               <Button
-                href={`#${generateNextFileLink(
-                  gistFilesWithResult,
-                  currentGistFile
-                )}`}
-                component={NextLink}
-                ref={nextFileButtonRef}
-                rightIcon={<ArrowRightIcon />}
+                onClick={restart}
+                rightIcon={<ResetIcon />}
+                variant="default"
               >
-                Next File
+                Restart File
               </Button>
             )}
+          </Group>
         </Group>
       </Container>
     );
