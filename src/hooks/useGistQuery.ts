@@ -1,5 +1,6 @@
-import { useQuery } from "react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 
 export interface GistFile {
   filename: string;
@@ -17,17 +18,21 @@ export interface Gist {
 }
 
 interface GistQueryOptions {
-  onSuccess: (gist: Gist) => void;
+  onSuccess?: (gist: Gist) => void;
 }
-export const useGistQuery = (gistId: string, options?: GistQueryOptions) => {
-  const fetchGist = async (gistId: string) => {
+export const useGistQuery = (
+  gistId: string,
+  { onSuccess }: GistQueryOptions = {}
+) => {
+  const fetchGist = async () => {
     const { data } = await axios.get<Gist>(
       `https://api.github.com/gists/${gistId}`
     );
     return data;
   };
-  return useQuery(["gist", gistId], () => fetchGist(gistId), {
+
+  return useQuery(["gist", gistId], () => fetchGist(), {
     enabled: gistId !== "",
-    onSuccess: options?.onSuccess,
+    onSuccess,
   });
 };

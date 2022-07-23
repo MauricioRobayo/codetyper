@@ -13,9 +13,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { GistCard } from "../../../components/GistCard/GistCard";
 import { GistForm } from "../../../components/GistForm";
+import { useGistFilesQuery } from "../../../hooks/useGistFilesQuery";
 import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
-import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 import { generateGistPath } from "../../../utils/generateGistPath";
 import { getRandomGist } from "../../../utils/getRandomGist";
 
@@ -28,9 +28,7 @@ const UserPage = () => {
     setRandomGist(getRandomGist(gists));
   };
 
-  useRawFilesQuery(
-    Object.values(randomGist?.files ?? {}).map(({ raw_url }) => raw_url)
-  );
+  useGistFilesQuery(randomGist);
 
   const gistsQuery = useGistsQuery(
     typeof username === "string" ? username : "",

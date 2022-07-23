@@ -28,10 +28,9 @@ import {
   TypingTestResult,
 } from "../../../components/TypeTest/useTypingTest";
 import { useGetNextRandomGist } from "../../../hooks/useGetNextRandomGist";
+import { useGistFilesQuery } from "../../../hooks/useGistFilesQuery";
 import { Gist, GistFile, useGistQuery } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
-import { useRawFileQuery } from "../../../hooks/useRawFileQuery";
-import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 import { generateFilenameSlug } from "../../../utils/generateFilenameSlug";
 import { generateGistPath } from "../../../utils/generateGistPath";
 import { generateNextFileLink } from "../../../utils/generateNextFileLink";
@@ -72,6 +71,13 @@ const GistPage: NextPage = () => {
 
   const gistQuery = useGistQuery(typeof id === "string" ? id : "", {
     onSuccess: (gist) => {
+      const hash = router.asPath.split("#")[1];
+      if (!hash) {
+        router.replace({
+          hash: generateFilenameSlug(Object.values(gist.files)[0]!.filename),
+        });
+      }
+
       setGistFilesWithResults(
         Object.values(gist.files).map(
           (file): GistFileWithResult => ({
@@ -84,12 +90,8 @@ const GistPage: NextPage = () => {
       );
     },
   });
-  useRawFilesQuery(
-    Object.values(randomGist?.files ?? {}).map(({ raw_url }) => raw_url)
-  );
-  const rawFilesQuery = useRawFilesQuery(
-    gistFilesWithResult?.map(({ raw_url }) => raw_url) ?? []
-  );
+  useGistFilesQuery(randomGist);
+  const rawFilesQuery = useGistFilesQuery(gistQuery.data);
   const currentGistFile = useMemo(() => {
     const currentGistSlug = router.asPath.split("#")[1];
     return gistFilesWithResult.find(
@@ -121,7 +123,6 @@ const GistPage: NextPage = () => {
   }, []);
 
   useGetNextRandomGist(gistsQuery.data, username, setNextRandomGist);
-
   useEffect(() => {
     if (allGistFilesCompleted) {
       nextGistButtonRef.current?.focus();
