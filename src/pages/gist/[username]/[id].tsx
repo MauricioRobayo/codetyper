@@ -115,6 +115,7 @@ const GistPage: NextPage = () => {
         setIsTyping(false);
       });
       nextFileButtonRef.current?.focus();
+      nextGistButtonRef.current?.focus();
     },
     [currentGistFile, gistFilesWithResult]
   );
@@ -123,11 +124,6 @@ const GistPage: NextPage = () => {
   }, []);
 
   useGetNextRandomGist(gistsQuery.data, username, setNextRandomGist);
-  useEffect(() => {
-    if (allGistFilesCompleted) {
-      nextGistButtonRef.current?.focus();
-    }
-  }, [allGistFilesCompleted]);
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
