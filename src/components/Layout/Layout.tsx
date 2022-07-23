@@ -1,13 +1,12 @@
 import {
   Anchor,
   AppShell,
+  Box,
   Center,
+  CSSObject,
   Footer,
   Header,
   Title,
-  Text,
-  MantineTheme,
-  CSSObject,
 } from "@mantine/core";
 import Link from "next/link";
 
@@ -43,13 +42,13 @@ export function Layout({ children }: LayoutProps) {
         footer={
           <Footer height="auto" p="md">
             <Center>
-              <div>
+              <Box>
                 This is an{" "}
                 <Anchor href="https://github.com/MauricioRobayo/codetyper">
                   open source
                 </Anchor>{" "}
                 project
-              </div>
+              </Box>
             </Center>
           </Footer>
         }
