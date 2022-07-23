@@ -1,36 +1,45 @@
-import { Button, Container, Divider, Group, List, Text } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Divider,
+  Group,
+  List,
+  Loader,
+  Text,
+} from "@mantine/core";
+import { NextLink } from "@mantine/next";
 import { PlayIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
-import slug from "slug";
-import { GIST_BASE_PATH } from "../../../../config";
+import { useState } from "react";
 import { GistCard } from "../../../components/GistCard/GistCard";
 import { GistForm } from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
+import { generateRandomGistPath } from "../../../utils/generateRandomGistPath";
 
 const UserPage = () => {
+  const [randomGistPath, setRandomGistUrl] = useState<string | null>(null);
   const router = useRouter();
-  const username = router.query.username as string;
+  const username = router.query.username;
 
-  const gistsQuery = useGistsQuery(username);
+  const setNextRandomGistUrl = (gists: Gist[], username: string) => {
+    setRandomGistUrl(generateRandomGistPath(gists, username));
+  };
+
+  const gistsQuery = useGistsQuery(
+    typeof username === "string" ? username : "",
+    {
+      onSuccess: setNextRandomGistUrl,
+    }
+  );
 
   if (gistsQuery.isError) {
     return <div>Something unexpected happened!</div>;
   }
 
-  const startRandomTypeTest = () => {
-    const gists = gistsQuery.data;
-
-    if (!gists) {
-      return;
-    }
-
-    router.push(generateRandomGistPath(gists, username));
-  };
-
   return (
     <>
-      {router.isReady && (
+      {router.isReady && typeof username === "string" && (
         <Container>
           <Group align="flex-end" position="apart">
             <GistForm
@@ -38,10 +47,18 @@ const UserPage = () => {
               loading={gistsQuery.isLoading}
               showHeader
             />
-            <Button onClick={startRandomTypeTest} variant="default">
-              <Text mr="md">Random Gist</Text>
-              <PlayIcon />
-            </Button>
+            {randomGistPath ? (
+              <Button
+                component={NextLink}
+                href={randomGistPath}
+                variant="default"
+              >
+                <Text mr="md">Random Gist</Text>
+                <PlayIcon />
+              </Button>
+            ) : (
+              <Loader />
+            )}
           </Group>
           <Divider my="xl" />
         </Container>
@@ -71,18 +88,5 @@ const UserPage = () => {
     </>
   );
 };
-
-function generateRandomGistPath(gists: Gist[], username: string) {
-  const randomIndex = Math.floor(Math.random() * gists.length);
-  const randomGist = gists[randomIndex]!;
-  const gistFile = Object.values(randomGist.files)[0]!;
-  const gistFileSlug = generateFilenameSlug(gistFile.filename);
-
-  return `${GIST_BASE_PATH}/${username}/${randomGist.id}#${gistFileSlug}`;
-}
-
-export function generateFilenameSlug(filename: string): string {
-  return `file-${slug(filename, { charmap: { ".": "-", _: "_" } })}`;
-}
 
 export default UserPage;

@@ -1,7 +1,7 @@
 import { Anchor, Group, List, Text } from "@mantine/core";
 import Link from "next/link";
-import { generateFilenameSlug } from "../../pages/gist/[username]";
 import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
+import { generateFilenameSlug } from "../../utils/generateFilenameSlug";
 import { FileIcon } from "./FileIcons";
 import { TestResult } from "./TestResult";
 

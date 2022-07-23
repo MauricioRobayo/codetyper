@@ -1,6 +1,5 @@
 import {
   Anchor,
-  Badge,
   Box,
   Breadcrumbs,
   Button,
@@ -13,7 +12,7 @@ import { GitHubLogoIcon, PlayIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { GIST_BASE_PATH } from "../../../config";
 import { Gist } from "../../hooks/useGistQuery";
-import { generateFilenameSlug } from "../../pages/gist/[username]";
+import { generateFilenameSlug } from "../../utils/generateFilenameSlug";
 
 interface BreadcrumbItem {
   title: string;

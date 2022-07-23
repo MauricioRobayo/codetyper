@@ -5,20 +5,21 @@ import {
   Container,
   Group,
   Loader,
-  Title,
   Text,
+  Title,
 } from "@mantine/core";
+import { NextLink } from "@mantine/next";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   GitHubLogoIcon,
+  ShuffleIcon,
 } from "@radix-ui/react-icons";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { generateFilenameSlug } from ".";
 import { GIST_BASE_PATH } from "../../../../config";
 import { FileList } from "../../../components/FileList";
 import { TypeTest } from "../../../components/TypeTest";
@@ -26,8 +27,11 @@ import {
   TextState,
   TypingTestResult,
 } from "../../../components/TypeTest/useTypingTest";
-import { GistFile, useGistQuery } from "../../../hooks/useGistQuery";
+import { Gist, GistFile, useGistQuery } from "../../../hooks/useGistQuery";
+import { useGistsQuery } from "../../../hooks/useGistsQuery";
 import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
+import { generateFilenameSlug } from "../../../utils/generateFilenameSlug";
+import { generateRandomGistPath } from "../../../utils/generateRandomGistPath";
 
 export type GistFileWithResult = GistFile & {
   typingTest:
@@ -42,15 +46,35 @@ export type GistFileWithResult = GistFile & {
 };
 
 const GistPage: NextPage = () => {
-  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const [randomGistPath, setRandomGistPath] = useState<string | null>(null);
+  const nextFileButtonRef = useRef<HTMLAnchorElement>(null);
+  const nextGistButtonRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
-  const id = router.query.id as string | undefined;
-  const username = router.query.username as string | undefined;
+  const id = router.query.id;
+  const username = router.query.username;
   const [gistFilesWithResult, setGistFilesWithResults] = useState<
     GistFileWithResult[]
   >([]);
   const [isTyping, setIsTyping] = useState(false);
-  const gistQuery = useGistQuery(id ?? "", {
+  const setNextRandomGistPath = useCallback(
+    (gists: Gist[], username: string) => {
+      const nextRandomGistPath = generateRandomGistPath(
+        gists,
+        username,
+        typeof id === "string" ? [id] : []
+      );
+      setRandomGistPath(nextRandomGistPath);
+    },
+    [id]
+  );
+  const gistsQuery = useGistsQuery(
+    typeof username === "string" ? username : "",
+    {
+      onSuccess: setNextRandomGistPath,
+    }
+  );
+
+  const gistQuery = useGistQuery(typeof id === "string" ? id : "", {
     onSuccess: (gist) => {
       setGistFilesWithResults(
         Object.values(gist.files).map(
@@ -73,6 +97,9 @@ const GistPage: NextPage = () => {
       (gistFile) => generateFilenameSlug(gistFile.filename) === currentGistSlug
     );
   }, [router.asPath, gistFilesWithResult]);
+  const allGistFilesCompleted = gistFilesWithResult.every(
+    (gistFile) => gistFile.typingTest.isDone
+  );
   const onFinish = useCallback(
     (textState: TextState, result: TypingTestResult) => {
       if (currentGistFile) {
@@ -86,13 +113,37 @@ const GistPage: NextPage = () => {
       flushSync(() => {
         setIsTyping(false);
       });
-      buttonRef.current?.focus();
+      nextFileButtonRef.current?.focus();
     },
     [currentGistFile, gistFilesWithResult]
   );
+  useEffect(() => {
+    if (allGistFilesCompleted) {
+      nextGistButtonRef.current?.focus();
+    }
+  }, [allGistFilesCompleted]);
   const onStart = useCallback(() => {
     setIsTyping(true);
   }, []);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (
+        gistsQuery.data &&
+        typeof username === "string" &&
+        typeof id === "string"
+      ) {
+        console.log(gistsQuery.data);
+        setNextRandomGistPath(gistsQuery.data, username);
+      }
+    };
+
+    router.events.on("hashChangeStart", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [gistsQuery.data, id, router.events, setNextRandomGistPath, username]);
 
   useEffect(() => {
     const hash = router.asPath.split("#")[1];
@@ -168,23 +219,31 @@ const GistPage: NextPage = () => {
               <ArrowLeftIcon /> {username}&apos;s gists
             </Anchor>
           </Link>
-          {gistFilesWithResult.length > 1 && !isTyping && (
-            <Link
-              href={`#${generateNextFileLink(
-                gistFilesWithResult,
-                currentGistFile
-              )}`}
-              passHref
+          {allGistFilesCompleted && randomGistPath && (
+            <Button
+              component={NextLink}
+              href={randomGistPath}
+              ref={nextGistButtonRef}
+              rightIcon={<ShuffleIcon />}
             >
+              Next Random Gist
+            </Button>
+          )}
+          {gistFilesWithResult.length > 1 &&
+            !isTyping &&
+            !allGistFilesCompleted && (
               <Button
-                component="a"
-                ref={buttonRef}
+                href={`#${generateNextFileLink(
+                  gistFilesWithResult,
+                  currentGistFile
+                )}`}
+                component={NextLink}
+                ref={nextFileButtonRef}
                 rightIcon={<ArrowRightIcon />}
               >
                 Next File
               </Button>
-            </Link>
-          )}
+            )}
         </Group>
       </Container>
     );
