@@ -133,12 +133,11 @@ const GistPage: NextPage = () => {
         typeof username === "string" &&
         typeof id === "string"
       ) {
-        console.log(gistsQuery.data);
         setNextRandomGistPath(gistsQuery.data, username);
       }
     };
 
-    router.events.on("hashChangeStart", handleRouteChange);
+    router.events.on("routeChangeComplete", handleRouteChange);
 
     return () => {
       router.events.off("routeChangeStart", handleRouteChange);
