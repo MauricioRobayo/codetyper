@@ -27,10 +27,12 @@ import {
   TextState,
   TypingTestResult,
 } from "../../../components/TypeTest/useTypingTest";
+import { useGetNextRandomGist } from "../../../hooks/useGetNextRandomGist";
 import { Gist, GistFile, useGistQuery } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
 import { generateFilenameSlug } from "../../../utils/generateFilenameSlug";
+import { generateNextFileLink } from "../../../utils/generateNextFileLink";
 import { generateRandomGistPath } from "../../../utils/generateRandomGistPath";
 
 export type GistFileWithResult = GistFile & {
@@ -117,42 +119,17 @@ const GistPage: NextPage = () => {
     },
     [currentGistFile, gistFilesWithResult]
   );
+  const onStart = useCallback(() => {
+    setIsTyping(true);
+  }, []);
+
+  useGetNextRandomGist(gistsQuery.data, username, setNextRandomGistPath);
+
   useEffect(() => {
     if (allGistFilesCompleted) {
       nextGistButtonRef.current?.focus();
     }
   }, [allGistFilesCompleted]);
-  const onStart = useCallback(() => {
-    setIsTyping(true);
-  }, []);
-
-  useEffect(() => {
-    const handleRouteChange = () => {
-      if (
-        gistsQuery.data &&
-        typeof username === "string" &&
-        typeof id === "string"
-      ) {
-        setNextRandomGistPath(gistsQuery.data, username);
-      }
-    };
-
-    router.events.on("routeChangeComplete", handleRouteChange);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, [gistsQuery.data, id, router.events, setNextRandomGistPath, username]);
-
-  useEffect(() => {
-    const hash = router.asPath.split("#")[1];
-    if (!hash && gistQuery.data) {
-      const hash = generateFilenameSlug(
-        Object.values(gistQuery.data.files)[0]!.filename
-      );
-      router.replace({ hash });
-    }
-  }, [gistQuery.data, router]);
 
   if (rawFilesQuery.isError || gistQuery.isError) {
     <div>Something wrong happened!</div>;
@@ -256,15 +233,3 @@ const GistPage: NextPage = () => {
 };
 
 export default GistPage;
-
-function generateNextFileLink(
-  gistFilesWithResult: GistFileWithResult[],
-  currentGistFile: GistFile
-) {
-  const currentIndex = gistFilesWithResult.findIndex(
-    (gistFile) => gistFile.filename === currentGistFile?.filename
-  );
-  const nextIndex = (currentIndex + 1) % gistFilesWithResult.length;
-  const nextFile = gistFilesWithResult[nextIndex]!;
-  return generateFilenameSlug(nextFile.filename);
-}
