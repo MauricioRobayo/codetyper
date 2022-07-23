@@ -45,7 +45,7 @@ export function Layout({ children }: LayoutProps) {
             <Center>
               <div>
                 This is an{" "}
-                <Anchor href="https://github.com/MauricioRobayo/code-typer">
+                <Anchor href="https://github.com/MauricioRobayo/codetyper">
                   open source
                 </Anchor>{" "}
                 project
