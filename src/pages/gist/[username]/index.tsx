@@ -15,21 +15,27 @@ import { GistCard } from "../../../components/GistCard/GistCard";
 import { GistForm } from "../../../components/GistForm";
 import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
-import { generateRandomGistPath } from "../../../utils/generateRandomGistPath";
+import { useRawFilesQuery } from "../../../hooks/useRawFilesQuery";
+import { generateGistPath } from "../../../utils/generateGistPath";
+import { getRandomGist } from "../../../utils/getRandomGist";
 
 const UserPage = () => {
-  const [randomGistPath, setRandomGistUrl] = useState<string | null>(null);
+  const [randomGist, setRandomGist] = useState<Gist | null>(null);
   const router = useRouter();
   const username = router.query.username;
 
-  const setNextRandomGistUrl = (gists: Gist[], username: string) => {
-    setRandomGistUrl(generateRandomGistPath(gists, username));
+  const setNextRandomGist = (gists: Gist[]) => {
+    setRandomGist(getRandomGist(gists));
   };
+
+  useRawFilesQuery(
+    Object.values(randomGist?.files ?? {}).map(({ raw_url }) => raw_url)
+  );
 
   const gistsQuery = useGistsQuery(
     typeof username === "string" ? username : "",
     {
-      onSuccess: setNextRandomGistUrl,
+      onSuccess: setNextRandomGist,
     }
   );
 
@@ -47,11 +53,12 @@ const UserPage = () => {
               loading={gistsQuery.isLoading}
               showHeader
             />
-            {randomGistPath ? (
+            {randomGist ? (
               <Button
                 component={NextLink}
-                href={randomGistPath}
+                href={generateGistPath(randomGist, username)}
                 variant="default"
+                tabIndex={0}
               >
                 <Text mr="md">Random Gist</Text>
                 <PlayIcon />
