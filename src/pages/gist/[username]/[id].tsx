@@ -19,7 +19,7 @@ import {
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { GIST_BASE_PATH } from "../../../../config";
 import { FileList } from "../../../components/FileList";
@@ -115,8 +115,8 @@ const GistPage: NextPage = () => {
       flushSync(() => {
         setIsTyping(false);
       });
-      nextFileButtonRef.current?.focus();
       nextGistButtonRef.current?.focus();
+      nextFileButtonRef.current?.focus();
     },
     [currentGistFile, gistFilesWithResult]
   );
@@ -205,18 +205,6 @@ const GistPage: NextPage = () => {
             </Anchor>
           </Link>
           <Group>
-            {allGistFilesCompleted &&
-              randomGist &&
-              typeof username === "string" && (
-                <Button
-                  component={NextLink}
-                  href={generateGistPath(randomGist, username)}
-                  ref={nextGistButtonRef}
-                  rightIcon={<ShuffleIcon />}
-                >
-                  Next Random Gist
-                </Button>
-              )}
             {gistFilesWithResult.length > 1 &&
               !isTyping &&
               !allGistFilesCompleted && (
@@ -232,6 +220,16 @@ const GistPage: NextPage = () => {
                   Next File
                 </Button>
               )}
+            {!isTyping && randomGist && typeof username === "string" && (
+              <Button
+                component={NextLink}
+                href={generateGistPath(randomGist, username)}
+                ref={nextGistButtonRef}
+                rightIcon={<ShuffleIcon />}
+              >
+                Next Random Gist
+              </Button>
+            )}
             {currentGistFile.typingTest.isDone && (
               <Button
                 onClick={restart}

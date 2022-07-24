@@ -1,4 +1,4 @@
-import { Text } from "@mantine/core";
+import { Badge } from "@mantine/core";
 import { TypingTestResult } from "../TypeTest/useTypingTest";
 
 interface TypingTestResultProps {
@@ -9,8 +9,12 @@ export function TestResult({
 }: TypingTestResultProps) {
   return (
     <>
-      <Text weight="bold">wpm {netWPM}</Text>
-      <Text weight="bold">acc {Math.round(accuracy * 100)}%</Text>
+      <Badge color="teal" variant="light">
+        wpm {netWPM}
+      </Badge>
+      <Badge color="teal" variant="light">
+        acc {Math.round(accuracy * 100)}%
+      </Badge>
     </>
   );
 }

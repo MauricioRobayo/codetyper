@@ -1,5 +1,5 @@
 import { Button, Group, List, Text } from "@mantine/core";
-import { PlayIcon, ResetIcon } from "@radix-ui/react-icons";
+import { EyeOpenIcon, PlayIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
 import { generateFilenameSlug } from "../../utils/generateFilenameSlug";
@@ -22,26 +22,24 @@ export function FileList({ gistFiles, activeGistFile }: FilesListProps) {
           >
             <Group>
               {isActive ? (
-                <Text weight="bolder">{filename}</Text>
+                <Text>{filename}</Text>
               ) : (
-                <>
-                  <Text color="dimmed">{filename}</Text>
-                  <Link
-                    href={{ hash: generateFilenameSlug(filename) }}
-                    passHref
-                  >
-                    <Button
-                      component="a"
-                      color="dimmed"
-                      variant="light"
-                      compact
-                    >
-                      {typingTest.isDone ? <ResetIcon /> : <PlayIcon />}
-                    </Button>
-                  </Link>
-                </>
+                <Text color="dimmed">{filename}</Text>
               )}
               {typingTest.isDone && <TestResult result={typingTest.result} />}
+              {!isActive && (
+                <Link href={{ hash: generateFilenameSlug(filename) }} passHref>
+                  <Button
+                    component="a"
+                    color="dimmed"
+                    variant="light"
+                    compact
+                    px="md"
+                  >
+                    {typingTest.isDone ? <EyeOpenIcon /> : <PlayIcon />}
+                  </Button>
+                </Link>
+              )}
             </Group>
           </List.Item>
         );
