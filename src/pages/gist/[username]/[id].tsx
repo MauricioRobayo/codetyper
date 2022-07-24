@@ -226,6 +226,7 @@ const GistPage: NextPage = () => {
                 href={generateGistPath(randomGist, username)}
                 ref={nextGistButtonRef}
                 rightIcon={<ShuffleIcon />}
+                variant={allGistFilesCompleted ? "filled" : "default"}
               >
                 Next Random Gist
               </Button>
