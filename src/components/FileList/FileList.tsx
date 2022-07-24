@@ -29,13 +29,7 @@ export function FileList({ gistFiles, activeGistFile }: FilesListProps) {
               {typingTest.isDone && <TestResult result={typingTest.result} />}
               {!isActive && (
                 <Link href={{ hash: generateFilenameSlug(filename) }} passHref>
-                  <Button
-                    component="a"
-                    color="dimmed"
-                    variant="light"
-                    compact
-                    px="md"
-                  >
+                  <Button component="a" color="dimmed" variant="subtle" compact>
                     {typingTest.isDone ? <EyeOpenIcon /> : <PlayIcon />}
                   </Button>
                 </Link>
