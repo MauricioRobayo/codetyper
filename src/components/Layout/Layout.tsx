@@ -15,7 +15,7 @@ interface LayoutProps {
 }
 export function Layout({ children }: LayoutProps) {
   const sx: CSSObject = {
-    height: "100vh",
+    height: "1000vh",
     display: "flex",
     flexDirection: "column",
   };
@@ -28,10 +28,11 @@ export function Layout({ children }: LayoutProps) {
   return (
     <>
       <AppShell
+        fixed={false}
         sx={sx}
         styles={styles}
         header={
-          <Header height="auto" p="md">
+          <Header height="100px" p="md">
             <Link href="/" passHref>
               <Anchor>
                 <Title>Code Typer</Title>
