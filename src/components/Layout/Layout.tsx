@@ -15,7 +15,7 @@ interface LayoutProps {
 }
 export function Layout({ children }: LayoutProps) {
   const sx: CSSObject = {
-    height: "1000vh",
+    height: "100vh",
     display: "flex",
     flexDirection: "column",
   };
