@@ -1,18 +1,16 @@
-import "../../styles/globals.css";
+import { MantineProvider } from "@mantine/core";
 import type { AppProps } from "next/app";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { MantineProvider } from "@mantine/core";
+import "../../styles/globals.css";
 import { Layout } from "../components/Layout";
-import { GoogleAnalytics, usePagesViews } from "nextjs-google-analytics";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
-  usePagesViews();
-
   return (
     <>
-      <GoogleAnalytics />
+      <GoogleAnalytics trackPageViews />
       <QueryClientProvider client={queryClient}>
         <MantineProvider
           withGlobalStyles
