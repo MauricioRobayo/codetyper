@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { emojiRegex } from "./emojiRegExp";
 
 export type CharacterStatus = "correct" | "error" | "corrected" | null;
 export type TextState = {
@@ -62,6 +61,7 @@ export const useTypingTest = (
     const handleKeydown = (e: KeyboardEvent) => {
       const { key, ctrlKey, altKey } = e;
       if (
+        (!isTyping && key === "Enter") ||
         altKey ||
         ctrlKey ||
         [
