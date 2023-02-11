@@ -20,7 +20,26 @@ export type TypingTestResult = {
   minutes: number;
   seconds: number;
 };
-
+const excludedKeys = new Set([
+  "Alt",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "CapsLock",
+  "Control",
+  "Dead",
+  "Delete",
+  "End",
+  "Escape",
+  "Home",
+  "MediaPause",
+  "Meta",
+  "PageDown",
+  "PageUp",
+  "Shift",
+  "Tab",
+]);
 const displayChars: Record<string, string> = {
   "\n": "⏎",
 };
@@ -64,25 +83,7 @@ export const useTypingTest = (
         (!isTyping && key === "Enter") ||
         altKey ||
         ctrlKey ||
-        [
-          "Alt",
-          "ArrowDown",
-          "ArrowLeft",
-          "ArrowRight",
-          "ArrowUp",
-          "CapsLock",
-          "Control",
-          "Dead",
-          "Delete",
-          "End",
-          "Escape",
-          "Home",
-          "MediaPause",
-          "PageDown",
-          "PageUp",
-          "Shift",
-          "Tab",
-        ].includes(key)
+        excludedKeys.has(key)
       ) {
         return;
       }
